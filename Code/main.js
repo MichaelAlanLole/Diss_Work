@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
-import Background from 'three/src/renderers/common/Background.js';
+
 
 // SCENE CREATION
 const scene = new THREE.Scene();
@@ -49,7 +49,7 @@ renderer.setAnimationLoop(animate);
 document.body.appendChild(renderer.domElement);
 
 // Orbit Controls
-const controls = new OrbitControls(camera, renderer.domElement);
+//const controls = new OrbitControls(camera, renderer.domElement);
 
 // HANDLE RESIZING OF WINDOW
 function onWindowResize() {
@@ -108,6 +108,9 @@ scene.add(cPointLabel);
 const mousePos = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
+// Store What Object Is Closest To The Camera
+let hoveredObject = null;
+
 // Event Listener For The Raycaster
 window.addEventListener("mousemove", function (e) {
 	mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
@@ -118,6 +121,8 @@ window.addEventListener("mousemove", function (e) {
 	if (intersects.length > 0) {
 		const firstHit = intersects[0].object;
 		if (firstHit.name.startsWith("sphereMesh")) {
+			hoveredObject = firstHit;
+
 			switch (intersects[0].object.name) {
 				case "sphereMesh1":
 					labelP.className = "tooltip show";
@@ -153,12 +158,57 @@ window.addEventListener("mousemove", function (e) {
 					break;
 			}
 		} else {
+			hoveredObject = null;
 			labelP.className = "tooltip hide";
 		}
 	} else {
+		hoveredObject = null;
 		labelP.className = "tooltip hide";
 	}
 });
+
+// Click On Spheres Event Listener, Moves Camera To The Set Location
+window.addEventListener("click", () => {
+    if (!hoveredObject) return;
+
+	switch (hoveredObject.name) {
+		case "sphereMesh1":
+			camera.position.set(30, 0, -20);
+			camera.lookAt(30, -5, -40);
+			break;
+		case "sphereMesh2":
+			camera.position.set(-30, 0, -20);
+			camera.lookAt(-30, -5, -40);
+			break;
+		case "sphereMesh3":
+			camera.position.set(60, 0, -20);
+			camera.lookAt(60, -5, -40);
+			break;
+		case "sphereMesh4":
+			camera.position.set(-60, 0, -20);
+			camera.lookAt(-60, -5, -40);
+			break;
+		case "sphereMesh5":
+			camera.position.set(100, 0, -20);
+			camera.lookAt(100, -5, -40);
+			break;
+		case "sphereMesh6":
+			camera.position.set(-100, 0, -20);
+			camera.lookAt(-100, -5, -40);
+			break;
+		default:
+			break;
+	}
+})
+
+const backBut = document.createElement("button");
+backBut.className = "button hide";
+document.getElementById("backButton").append(backBut);
+
+let camPos = camera.position;
+const camLocations = [{x: 30, y: 0, z: -20}, {x: -30,  y: 0, z: -20}, {x: 60,  y: 0, z: -20}, {x: -60,  y: 0, z: -20}, {x: 100,  y: 0, z: -20}, {x: -100, y: 0, z: -20}];
+
+console.log(camPos.x, camPos.y, camPos.z);
 
 // GEOMETRY CREATION
 const ball_geo = new THREE.SphereGeometry(1, 20, 20);
@@ -166,6 +216,34 @@ const ball_mat = new THREE.MeshStandardMaterial({ color: 0xffffff });
 const ball = new THREE.Mesh(ball_geo, ball_mat);
 ball.receiveShadow = true;
 scene.add(ball);
+
+const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor);
+floor.position.set(30, -5, -40);
+
+const floor2 = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor2);
+floor2.position.set(-30, -5, -40);
+
+const floor3 = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor3);
+floor3.position.set(60, -5, -40);
+
+const floor4 = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor4);
+floor4.position.set(-60, -5, -40);
+
+const floor5 = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor5);
+floor5.position.set(100, -5, -40);
+
+const floor6 = new THREE.Mesh(floorGeo, floorMat);
+scene.add(floor6);
+floor6.position.set(-100, -5, -40);
+
+
 
 // ANIMATE FUNCTION
 function animate() {
@@ -176,12 +254,20 @@ function animate() {
 	// Renders The Labels Each Frame
 	label_renderer.render(scene, camera);
 
+	if (camLocations.some(loc =>
+		loc.x === camPos.x &&
+		loc.y === camPos.y &&
+		loc.z === camPos.z
+	)) {
+		backBut.className = "button show";
+	}
+
 	// Update Orbit Controls
-	controls.update();
+	// controls.update();
 }
 
 // DETECTS IF WINDOW HAS BEEN RESIZED, IF IT HAS, IT ADJUSTS ACCORDINGLY
-window.addEventListener("resize", onWindowResize());
+window.addEventListener("resize", onWindowResize);
 
 // CALLS FUNCTION
 animate();
