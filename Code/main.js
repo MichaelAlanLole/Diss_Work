@@ -255,10 +255,10 @@ document.addEventListener("keydown", function (e) {
     if (camStart) return;
 
 	if (e.key === "d" || e.key === "D") {
-		camera.position.x += 0.04;
+		camera.position.x += 0.5;
 	}
 	if (e.key === "a" || e.key === "A") {
-		camera.position.x += -0.04;
+		camera.position.x += -0.5;
 	}
 })
 
