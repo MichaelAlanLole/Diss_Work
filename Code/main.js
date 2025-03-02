@@ -8,7 +8,6 @@ import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 const scene = new THREE.Scene();
 scene.background = 0xffffff;
 
-
 // CAMERA CREATION
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
@@ -50,14 +49,6 @@ document.body.appendChild(renderer.domElement);
 
 // Orbit Controls
 //const controls = new OrbitControls(camera, renderer.domElement);
-
-// HANDLE RESIZING OF WINDOW
-function onWindowResize() {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	label_renderer.setSize(window.innerWidth, window.innerHeight);
-}
 
 // Create Spheres For The Labels
 function createCpointMesh(name, x, y, z) {
@@ -169,7 +160,7 @@ window.addEventListener("mousemove", function (e) {
 
 // Click On Spheres Event Listener, Moves Camera To The Set Location
 window.addEventListener("click", () => {
-    if (!hoveredObject) return;
+	if (!hoveredObject) return;
 
 	switch (hoveredObject.name) {
 		case "sphereMesh1":
@@ -206,9 +197,7 @@ backBut.className = "button hide";
 document.getElementById("backButton").append(backBut);
 
 let camPos = camera.position;
-const camLocations = [{x: 30, y: 0, z: -20}, {x: -30,  y: 0, z: -20}, {x: 60,  y: 0, z: -20}, {x: -60,  y: 0, z: -20}, {x: 100,  y: 0, z: -20}, {x: -100, y: 0, z: -20}];
-
-console.log(camPos.x, camPos.y, camPos.z);
+const camLocations = [{ x: 30, y: 0, z: -20 }, { x: -30, y: 0, z: -20 }, { x: 60, y: 0, z: -20 }, { x: -60, y: 0, z: -20 }, { x: 100, y: 0, z: -20 }, { x: -100, y: 0, z: -20 }];
 
 // GEOMETRY CREATION
 const ball_geo = new THREE.SphereGeometry(1, 20, 20);
@@ -216,6 +205,8 @@ const ball_mat = new THREE.MeshStandardMaterial({ color: 0xffffff });
 const ball = new THREE.Mesh(ball_geo, ball_mat);
 ball.receiveShadow = true;
 scene.add(ball);
+
+ball.add(sphereGroup);
 
 const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
 const floorMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
@@ -243,9 +234,35 @@ const floor6 = new THREE.Mesh(floorGeo, floorMat);
 scene.add(floor6);
 floor6.position.set(-100, -5, -40);
 
+// Set A Booleen Value For If The Camera Is In Start Position
+let camStart = true;
 
+// Event Listener Checks If camStart Is False, If It Is, It Wont Proceed
+// Checks The Key Pressed And Rotates Based On The Key
+document.addEventListener("keydown", function (e) {
+    if (!camStart) return;
 
-// ANIMATE FUNCTION
+	if (e.key === "d" || e.key === "D") {
+		ball.rotateY(0.004);
+	}
+	if (e.key === "a" || e.key === "A") {
+		ball.rotateY(-0.004);
+	}
+})
+
+// Checks If camStart Is True, If It Is, Dont Proceed
+document.addEventListener("keydown", function (e) {
+    if (camStart) return;
+
+	if (e.key === "d" || e.key === "D") {
+		camera.position.x += 0.04;
+	}
+	if (e.key === "a" || e.key === "A") {
+		camera.position.x += -0.04;
+	}
+})
+
+// Animate Function
 function animate() {
 
 	// RENDERES THE SCENE EACH FRAME
@@ -254,6 +271,7 @@ function animate() {
 	// Renders The Labels Each Frame
 	label_renderer.render(scene, camera);
 
+	// Checks If The Camera Is At Any Of The camLocations, If So, Displays Button
 	if (camLocations.some(loc =>
 		loc.x === camPos.x &&
 		loc.y === camPos.y &&
@@ -262,12 +280,31 @@ function animate() {
 		backBut.className = "button show";
 	}
 
+	// If Button Is Clicked, Sets Camera To Start Position And Hides Button
+	backBut.addEventListener("click", () => {
+		camera.position.set(0, 0, 5);
+		camera.lookAt(0, 0, 0);
+		backBut.className = "button hide";
+	})
+
+	// If Camera Position On The x Axis Is Not 0, Return False, If It Is 0, Return True
+	if (camPos.x !== 0) {
+		camStart = false;
+	} else {
+		camStart = true;
+	}
+
 	// Update Orbit Controls
 	// controls.update();
 }
 
 // DETECTS IF WINDOW HAS BEEN RESIZED, IF IT HAS, IT ADJUSTS ACCORDINGLY
-window.addEventListener("resize", onWindowResize);
+window.addEventListener("resize", () => {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	label_renderer.setSize(window.innerWidth, window.innerHeight);
+});
 
 // CALLS FUNCTION
 animate();
