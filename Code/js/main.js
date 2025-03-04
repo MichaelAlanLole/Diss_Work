@@ -1,23 +1,15 @@
 // IMPORTS
 import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 
+// Import Scene Creation
+const { scene, camera, renderer } = createScene();
 
-// SCENE CREATION
-const scene = new THREE.Scene();
-scene.background = 0xffffff;
-
-// CAMERA CREATION
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
 // Light Creation
-
-// Ambient light gives whole scene a constant amount of light
-const amb_light = new THREE.AmbientLight(0xffffff, 0.2);
-scene.add(amb_light);
-
 const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
 dir_light.castShadow = true;
 dir_light.position.set(1, 1, 2);
@@ -25,10 +17,6 @@ scene.add(dir_light);
 
 const helper = new THREE.DirectionalLightHelper(dir_light, 5);
 scene.add(helper);
-
-// RENDERER CREATION
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
 
 // CSS2D Renderer Creation, Sets Window Size, Sets Position, Sets pointerEvents To
 // None Which Allows The Use Of Orbit Controls, Then Appends The Renderer To The HTML Document
@@ -38,14 +26,6 @@ label_renderer.domElement.style.position = "absolute";
 label_renderer.domElement.style.top = "0px";
 label_renderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(label_renderer.domElement);
-
-// Shadow Map Set Up
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-// Set Animate Function To Loop, Append The Script To The Body Of The HTML File
-renderer.setAnimationLoop(animate);
-document.body.appendChild(renderer.domElement);
 
 // Orbit Controls
 //const controls = new OrbitControls(camera, renderer.domElement);
@@ -265,6 +245,8 @@ document.addEventListener("keydown", function (e) {
 // Animate Function
 function animate() {
 
+	requestAnimationFrame(animate);
+
 	// RENDERES THE SCENE EACH FRAME
 	renderer.render(scene, camera);
 
@@ -297,14 +279,6 @@ function animate() {
 	// Update Orbit Controls
 	// controls.update();
 }
-
-// DETECTS IF WINDOW HAS BEEN RESIZED, IF IT HAS, IT ADJUSTS ACCORDINGLY
-window.addEventListener("resize", () => {
-	camera.aspect = window.innerWidth / window.innerHeight;
-	camera.updateProjectionMatrix();
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	label_renderer.setSize(window.innerWidth, window.innerHeight);
-});
 
 // CALLS FUNCTION
 animate();
