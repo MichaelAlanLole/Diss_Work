@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
@@ -186,6 +187,26 @@ const ball = new THREE.Mesh(ball_geo, ball_mat);
 ball.receiveShadow = true;
 scene.add(ball);
 
+let earthModel
+
+// Load GLTF model
+const loader = new GLTFLoader();
+loader.load(
+    './models/scene.gltf', // Path to the .gltf file
+    (gltf) => {
+		earthModel = gltf.scene;
+        scene.add(earthModel);
+		ball.add(earthModel);
+        console.log('Model loaded:', gltf);
+    },
+    (xhr) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+    },
+    (error) => {
+        console.error('An error occurred while loading the model:', error);
+    }
+);
+
 ball.add(sphereGroup);
 
 const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
@@ -223,22 +244,10 @@ document.addEventListener("keydown", function (e) {
     if (!camStart) return;
 
 	if (e.key === "d" || e.key === "D") {
-		ball.rotateY(0.004);
+		ball.rotateY(0.01);
 	}
 	if (e.key === "a" || e.key === "A") {
-		ball.rotateY(-0.004);
-	}
-})
-
-// Checks If camStart Is True, If It Is, Dont Proceed
-document.addEventListener("keydown", function (e) {
-    if (camStart) return;
-
-	if (e.key === "d" || e.key === "D") {
-		camera.position.x += 0.5;
-	}
-	if (e.key === "a" || e.key === "A") {
-		camera.position.x += -0.5;
+		ball.rotateY(-0.01);
 	}
 })
 

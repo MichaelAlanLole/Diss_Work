@@ -2,6 +2,10 @@ body {
     margin: 0;
 }
 
+.backButton {
+    position: absolute;
+}
+
 .tooltip {
     background-color: black;
     color: white;
