@@ -29,7 +29,7 @@ label_renderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(label_renderer.domElement);
 
 // Orbit Controls
-//const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
 
 // Create Spheres For The Labels
 function createCpointMesh(name, x, y, z) {
@@ -145,28 +145,40 @@ window.addEventListener("click", () => {
 
 	switch (hoveredObject.name) {
 		case "sphereMesh1":
-			camera.position.set(30, 0, -20);
-			camera.lookAt(30, -5, -40);
+			camera.position.set(30, 2, -23);
+			camera.lookAt(30, -5, -28);
+			controls.target.set(30, -5, -28);
+			controls.update();
 			break;
 		case "sphereMesh2":
 			camera.position.set(-30, 0, -20);
 			camera.lookAt(-30, -5, -40);
+			controls.target.set(-30, -5, -40);
+			controls.update();
 			break;
 		case "sphereMesh3":
 			camera.position.set(60, 0, -20);
 			camera.lookAt(60, -5, -40);
+			controls.target.set(60, -5, -40);
+			controls.update();
 			break;
 		case "sphereMesh4":
 			camera.position.set(-60, 0, -20);
 			camera.lookAt(-60, -5, -40);
+			controls.target.set(-60, -5, -40);
+			controls.update();
 			break;
 		case "sphereMesh5":
 			camera.position.set(100, 0, -20);
 			camera.lookAt(100, -5, -40);
+			controls.target.set(100, -5, -40);
+			controls.update();
 			break;
 		case "sphereMesh6":
 			camera.position.set(-100, 0, -20);
 			camera.lookAt(-100, -5, -40);
+			controls.target.set(-100, -5, -40);
+			controls.update();
 			break;
 		default:
 			break;
@@ -178,7 +190,7 @@ backBut.className = "button hide";
 document.getElementById("backButton").append(backBut);
 
 let camPos = camera.position;
-const camLocations = [{ x: 30, y: 0, z: -20 }, { x: -30, y: 0, z: -20 }, { x: 60, y: 0, z: -20 }, { x: -60, y: 0, z: -20 }, { x: 100, y: 0, z: -20 }, { x: -100, y: 0, z: -20 }];
+const camLocations = [{ x: 30, y: 2, z: -23 }, { x: -30, y: 0, z: -20 }, { x: 60, y: 0, z: -20 }, { x: -60, y: 0, z: -20 }, { x: 100, y: 0, z: -20 }, { x: -100, y: 0, z: -20 }];
 
 // GEOMETRY CREATION
 const ball_geo = new THREE.SphereGeometry(1, 20, 20);
@@ -188,6 +200,7 @@ ball.receiveShadow = true;
 scene.add(ball);
 
 let earthModel
+let EUmodel
 
 // Load GLTF model
 const loader = new GLTFLoader();
@@ -207,13 +220,29 @@ loader.load(
     }
 );
 
+loader.load(
+    './models/EUscene.glb', // Path to the .gltf file
+    (gltf) => {
+		EUmodel = gltf.scene;
+        scene.add(EUmodel);
+		EUmodel.position.set(30, -5, -30);
+        console.log('Model loaded:', gltf);
+    },
+    (xhr) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+    },
+    (error) => {
+        console.error('An error occurred while loading the model:', error);
+    }
+);
+
 ball.add(sphereGroup);
 
 const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
 const floorMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-const floor = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor);
-floor.position.set(30, -5, -40);
+//const floor = new THREE.Mesh(floorGeo, floorMat);
+//scene.add(floor);
+//floor.position.set(30, -5, -40);
 
 const floor2 = new THREE.Mesh(floorGeo, floorMat);
 scene.add(floor2);
@@ -275,6 +304,8 @@ function animate() {
 	backBut.addEventListener("click", () => {
 		camera.position.set(0, 0, 5);
 		camera.lookAt(0, 0, 0);
+		controls.target.set(0, 0, 0);
+		controls.update();
 		backBut.className = "button hide";
 	})
 
@@ -285,8 +316,8 @@ function animate() {
 		camStart = true;
 	}
 
-	// Update Orbit Controls
-	// controls.update();
+	//Update Orbit Controls
+	controls.update();
 }
 
 // CALLS FUNCTION

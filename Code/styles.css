@@ -69,3 +69,8 @@ body {
     background-color: red;
 }
 
+.button {
+    position: absolute;
+    width: 200px;
+}
+
