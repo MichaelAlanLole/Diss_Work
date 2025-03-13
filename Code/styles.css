@@ -6,6 +6,14 @@ body {
     position: absolute;
 }
 
+.button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: auto;
+    padding: 0.5rem 1rem;
+}
+
 .tooltip {
     background-color: black;
     color: white;
@@ -34,9 +42,19 @@ body {
     transform: translateY(-10px);
 }
 
+.button.hide {
+    display: none;
+    pointer-events: none;
+}
+
 .show {
     opacity: 1;
     transform: translateY(0px);
+}
+
+.button.show {
+    display: block;
+    pointer-events: auto;
 }
 
 .question-container {

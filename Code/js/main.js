@@ -8,16 +8,32 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
 
-camera.position.z = 5;
+const CtextureLoader = new THREE.CubeTextureLoader()
+const skyboxTexture = CtextureLoader.load([
+	'./skybox/right.png',
+	'./skybox/left.png',
+	'./skybox/top.png',
+	'./skybox/bottom.png',
+	'./skybox/front.png',
+	'./skybox/back.png',
+])
+scene.background = skyboxTexture;
 
 // Light Creation
 const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
-dir_light.castShadow = true;
-dir_light.position.set(1, 1, 2);
+dir_light.castShadow = true
+dir_light.target.position.set(0, 0, 250);
+dir_light.position.set(0, 0, 300);
 scene.add(dir_light);
+scene.add(dir_light.target);
 
-const helper = new THREE.DirectionalLightHelper(dir_light, 5);
-scene.add(helper);
+const dir_light2 = new THREE.DirectionalLight(0xFFFFFF, 1);
+dir_light2.castShadow = true
+dir_light2.target.position.set(0, 0, 250);
+dir_light2.position.set(0, 0, 200);
+scene.add(dir_light2);
+scene.add(dir_light2.target);
+
 
 // CSS2D Renderer Creation, Sets Window Size, Sets Position, Sets pointerEvents To
 // None Which Allows The Use Of Orbit Controls, Then Appends The Renderer To The HTML Document
@@ -31,12 +47,22 @@ document.body.appendChild(label_renderer.domElement);
 // Orbit Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
+camera.position.z = 280;
+camera.lookAt(0, 0, 200);
+controls.target.set(0, 0, 200);
+controls.update();
+
+controls.enablePan = false;
+controls.enableDamping = true;
+controls.enableZoom = false;
+
 // Create Spheres For The Labels
 function createCpointMesh(name, x, y, z) {
-	const geo = new THREE.SphereGeometry(0.1);
-	const mat = new THREE.MeshStandardMaterial({ color: 0xFF0000 });
+	const geo = new THREE.SphereGeometry(1);
+	const mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
 	const mesh = new THREE.Mesh(geo, mat);
 	mesh.position.set(x, y, z);
+	mesh.castShadow = true;
 	mesh.name = name;
 	return mesh;
 }
@@ -45,26 +71,29 @@ function createCpointMesh(name, x, y, z) {
 const sphereGroup = new THREE.Group();
 
 // Create Spheres, Give Them A Name And A X, Y, Z And Add To The Group
-const sphereMesh1 = createCpointMesh("sphereMesh1", -0.5, 0, 1.5);
+const sphereMesh1 = createCpointMesh("sphereMesh1", -20, 20, 3);
 sphereGroup.add(sphereMesh1);
 
-const sphereMesh2 = createCpointMesh("sphereMesh2", -0.3, 0, 1.5);
+const sphereMesh2 = createCpointMesh("sphereMesh2", -20, 0, 30);
 sphereGroup.add(sphereMesh2);
 
-const sphereMesh3 = createCpointMesh("sphereMesh3", -0.1, 0, 1.5);
+const sphereMesh3 = createCpointMesh("sphereMesh3", 0, 0, 30);
 sphereGroup.add(sphereMesh3);
 
-const sphereMesh4 = createCpointMesh("sphereMesh4", 0.1, 0, 1.5);
+const sphereMesh4 = createCpointMesh("sphereMesh4", 20, 0, 30);
 sphereGroup.add(sphereMesh4);
 
-const sphereMesh5 = createCpointMesh("sphereMesh5", 0.3, 0, 1.5);
+const sphereMesh5 = createCpointMesh("sphereMesh5", 40, 0, 30);
 sphereGroup.add(sphereMesh5);
 
-const sphereMesh6 = createCpointMesh("sphereMesh6", 0.5, 0, 1.5);
+const sphereMesh6 = createCpointMesh("sphereMesh6", 0, 20, 30);
 sphereGroup.add(sphereMesh6);
 
 // Adds Group To Scene
 scene.add(sphereGroup);
+
+const ball = new THREE.Mesh(new THREE.SphereGeometry(24, 50, 50), new THREE.MeshBasicMaterial());
+scene.add(ball);
 
 // Label Creation
 
@@ -94,36 +123,31 @@ window.addEventListener("mousemove", function (e) {
 		const firstHit = intersects[0].object;
 		if (firstHit.name.startsWith("sphereMesh")) {
 			hoveredObject = firstHit;
+			labelP.className = "tooltip show";
 
-			switch (intersects[0].object.name) {
+			const pos = new THREE.Vector3();
+			hoveredObject.getWorldPosition(pos);
+
+			cPointLabel.position.copy(pos).add(new THREE.Vector3(0, 10, 0));
+
+			// Set tooltip text based on the hovered object's name
+			switch (hoveredObject.name) {
 				case "sphereMesh1":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(-0.5, 0.8, 1.5);
 					labelP.textContent = "Click to reveal Europe";
 					break;
 				case "sphereMesh2":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(-0.3, 0.8, 1.5);
 					labelP.textContent = "Click to reveal Asia";
 					break;
 				case "sphereMesh3":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(-0.1, 0.8, 1.5);
 					labelP.textContent = "Click to reveal Africa";
 					break;
 				case "sphereMesh4":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(0.1, 0.8, 1.5);
 					labelP.textContent = "Click to reveal North America";
 					break;
 				case "sphereMesh5":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(0.3, 0.8, 1.5);
 					labelP.textContent = "Click to reveal South America";
 					break;
 				case "sphereMesh6":
-					labelP.className = "tooltip show";
-					cPointLabel.position.set(0.5, 0.8, 1.5);
 					labelP.textContent = "Click to reveal Somewhere else";
 					break;
 				default:
@@ -145,36 +169,43 @@ window.addEventListener("click", () => {
 
 	switch (hoveredObject.name) {
 		case "sphereMesh1":
-			camera.position.set(30, 2, -23);
-			camera.lookAt(30, -5, -28);
-			controls.target.set(30, -5, -28);
+			controls.saveState();
+			camera.position.set(30, 3, -25);
+			camera.lookAt(30, -5, -28.5);
+			controls.target.set(30, -5, -28.5);
 			controls.update();
+			console.log(camera.position)
 			break;
 		case "sphereMesh2":
+			controls.saveState();
 			camera.position.set(-30, 0, -20);
 			camera.lookAt(-30, -5, -40);
 			controls.target.set(-30, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh3":
+			controls.saveState();
 			camera.position.set(60, 0, -20);
 			camera.lookAt(60, -5, -40);
 			controls.target.set(60, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh4":
+			controls.saveState();
 			camera.position.set(-60, 0, -20);
 			camera.lookAt(-60, -5, -40);
 			controls.target.set(-60, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh5":
+			controls.saveState();
 			camera.position.set(100, 0, -20);
 			camera.lookAt(100, -5, -40);
 			controls.target.set(100, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh6":
+			controls.saveState();
 			camera.position.set(-100, 0, -20);
 			camera.lookAt(-100, -5, -40);
 			controls.target.set(-100, -5, -40);
@@ -189,60 +220,50 @@ const backBut = document.createElement("button");
 backBut.className = "button hide";
 document.getElementById("backButton").append(backBut);
 
-let camPos = camera.position;
-const camLocations = [{ x: 30, y: 2, z: -23 }, { x: -30, y: 0, z: -20 }, { x: 60, y: 0, z: -20 }, { x: -60, y: 0, z: -20 }, { x: 100, y: 0, z: -20 }, { x: -100, y: 0, z: -20 }];
-
-// GEOMETRY CREATION
-const ball_geo = new THREE.SphereGeometry(1, 20, 20);
-const ball_mat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-const ball = new THREE.Mesh(ball_geo, ball_mat);
-ball.receiveShadow = true;
-scene.add(ball);
-
 let earthModel
 let EUmodel
 
 // Load GLTF model
 const loader = new GLTFLoader();
 loader.load(
-    './models/scene.gltf', // Path to the .gltf file
-    (gltf) => {
+	'./models/low_poly_earthv2-3.glb', // Path to the .gltf file
+	(gltf) => {
 		earthModel = gltf.scene;
-        scene.add(earthModel);
-		ball.add(earthModel);
-        console.log('Model loaded:', gltf);
-    },
-    (xhr) => {
-        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-    },
-    (error) => {
-        console.error('An error occurred while loading the model:', error);
-    }
+		scene.add(earthModel);
+		earthModel.castShadow = true;
+		earthModel.receiveShadow = true;
+		earthModel.position.set(0, -25, 200);
+		console.log('Model loaded:', gltf);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
 );
+
+ball.position.set(0, -1, 200);
+ball.add(sphereGroup);
 
 loader.load(
-    './models/EUscene.glb', // Path to the .gltf file
-    (gltf) => {
+	'./models/EUscene.glb', // Path to the .gltf file
+	(gltf) => {
 		EUmodel = gltf.scene;
-        scene.add(EUmodel);
+		scene.add(EUmodel);
 		EUmodel.position.set(30, -5, -30);
-        console.log('Model loaded:', gltf);
-    },
-    (xhr) => {
-        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-    },
-    (error) => {
-        console.error('An error occurred while loading the model:', error);
-    }
+		console.log('Model loaded:', gltf);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
 );
-
-ball.add(sphereGroup);
 
 const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
 const floorMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
-//const floor = new THREE.Mesh(floorGeo, floorMat);
-//scene.add(floor);
-//floor.position.set(30, -5, -40);
 
 const floor2 = new THREE.Mesh(floorGeo, floorMat);
 scene.add(floor2);
@@ -264,21 +285,16 @@ const floor6 = new THREE.Mesh(floorGeo, floorMat);
 scene.add(floor6);
 floor6.position.set(-100, -5, -40);
 
-// Set A Booleen Value For If The Camera Is In Start Position
-let camStart = true;
+// If Button Is Clicked, Sets Camera To Start Position And Hides Button
+backBut.addEventListener("click", () => {
+	controls.reset();
+	controls.update();
+	backBut.className = "button hide";
+})
+
 
 // Event Listener Checks If camStart Is False, If It Is, It Wont Proceed
 // Checks The Key Pressed And Rotates Based On The Key
-document.addEventListener("keydown", function (e) {
-    if (!camStart) return;
-
-	if (e.key === "d" || e.key === "D") {
-		ball.rotateY(0.01);
-	}
-	if (e.key === "a" || e.key === "A") {
-		ball.rotateY(-0.01);
-	}
-})
 
 // Animate Function
 function animate() {
@@ -291,33 +307,17 @@ function animate() {
 	// Renders The Labels Each Frame
 	label_renderer.render(scene, camera);
 
-	// Checks If The Camera Is At Any Of The camLocations, If So, Displays Button
-	if (camLocations.some(loc =>
-		loc.x === camPos.x &&
-		loc.y === camPos.y &&
-		loc.z === camPos.z
-	)) {
-		backBut.className = "button show";
-	}
 
-	// If Button Is Clicked, Sets Camera To Start Position And Hides Button
-	backBut.addEventListener("click", () => {
-		camera.position.set(0, 0, 5);
-		camera.lookAt(0, 0, 0);
-		controls.target.set(0, 0, 0);
-		controls.update();
-		backBut.className = "button hide";
-	})
-
-	// If Camera Position On The x Axis Is Not 0, Return False, If It Is 0, Return True
-	if (camPos.x !== 0) {
-		camStart = false;
+	if (camera.position.z > -20) {
+		controls.enableRotate = true;
 	} else {
-		camStart = true;
+		controls.enableRotate = false;
+		console.log("no more movement")
+		backBut.className = "button show"
 	}
 
-	//Update Orbit Controls
-	controls.update();
+
+
 }
 
 // CALLS FUNCTION
