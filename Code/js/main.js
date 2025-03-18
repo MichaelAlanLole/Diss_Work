@@ -23,14 +23,14 @@ scene.background = skyboxTexture;
 const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
 dir_light.castShadow = true
 dir_light.target.position.set(0, 0, 250);
-dir_light.position.set(0, 0, 300);
+dir_light.position.set(-20, 0, 300);
 scene.add(dir_light);
 scene.add(dir_light.target);
 
 const dir_light2 = new THREE.DirectionalLight(0xFFFFFF, 1);
 dir_light2.castShadow = true
-dir_light2.target.position.set(0, 0, 250);
-dir_light2.position.set(0, 0, 200);
+dir_light2.target.position.set(30, -5, -35);
+dir_light2.position.set(30, 10, -20);
 scene.add(dir_light2);
 scene.add(dir_light2.target);
 
@@ -171,7 +171,7 @@ window.addEventListener("click", () => {
 
 	switch (hoveredObject.name) {
 		case "sphereMesh1":
-			camera.position.set(30, 3, -25);
+			camera.position.set(30, 5, -25);
 			camera.lookAt(30, -5, -28.5);
 			controls.target.set(30, -5, -28.5);
 			controls.update();

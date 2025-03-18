@@ -7,7 +7,7 @@ export function createScene() {
     scene.background = new THREE.Color(0xffffff);
 
     // Ambient light gives whole scene a constant amount of light
-    const amb_light = new THREE.AmbientLight(0xffffff, 0.2);
+    const amb_light = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(amb_light);
 
     // Camera Creation
