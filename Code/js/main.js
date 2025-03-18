@@ -71,22 +71,22 @@ function createCpointMesh(name, x, y, z) {
 const sphereGroup = new THREE.Group();
 
 // Create Spheres, Give Them A Name And A X, Y, Z And Add To The Group
-const sphereMesh1 = createCpointMesh("sphereMesh1", -20, 20, 3);
+const sphereMesh1 = createCpointMesh("sphereMesh1", -19, 22, 5);
 sphereGroup.add(sphereMesh1);
 
-const sphereMesh2 = createCpointMesh("sphereMesh2", -20, 0, 30);
+const sphereMesh2 = createCpointMesh("sphereMesh2", 0, 22, 20);
 sphereGroup.add(sphereMesh2);
 
-const sphereMesh3 = createCpointMesh("sphereMesh3", 0, 0, 30);
+const sphereMesh3 = createCpointMesh("sphereMesh3", -27, 5, 10);
 sphereGroup.add(sphereMesh3);
 
-const sphereMesh4 = createCpointMesh("sphereMesh4", 20, 0, 30);
+const sphereMesh4 = createCpointMesh("sphereMesh4", 3, 21, -22);
 sphereGroup.add(sphereMesh4);
 
-const sphereMesh5 = createCpointMesh("sphereMesh5", 40, 0, 30);
+const sphereMesh5 = createCpointMesh("sphereMesh5", -14, -5, -26);
 sphereGroup.add(sphereMesh5);
 
-const sphereMesh6 = createCpointMesh("sphereMesh6", 0, 20, 30);
+const sphereMesh6 = createCpointMesh("sphereMesh6", 17, -12, 21);
 sphereGroup.add(sphereMesh6);
 
 // Adds Group To Scene
@@ -148,7 +148,7 @@ window.addEventListener("mousemove", function (e) {
 					labelP.textContent = "Click to reveal South America";
 					break;
 				case "sphereMesh6":
-					labelP.textContent = "Click to reveal Somewhere else";
+					labelP.textContent = "Click to reveal Oceania";
 					break;
 				default:
 					break;
@@ -166,10 +166,11 @@ window.addEventListener("mousemove", function (e) {
 // Click On Spheres Event Listener, Moves Camera To The Set Location
 window.addEventListener("click", () => {
 	if (!hoveredObject) return;
+  
+  controls.saveState();
 
 	switch (hoveredObject.name) {
 		case "sphereMesh1":
-			controls.saveState();
 			camera.position.set(30, 3, -25);
 			camera.lookAt(30, -5, -28.5);
 			controls.target.set(30, -5, -28.5);
@@ -177,35 +178,30 @@ window.addEventListener("click", () => {
 			console.log(camera.position)
 			break;
 		case "sphereMesh2":
-			controls.saveState();
 			camera.position.set(-30, 0, -20);
 			camera.lookAt(-30, -5, -40);
 			controls.target.set(-30, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh3":
-			controls.saveState();
 			camera.position.set(60, 0, -20);
 			camera.lookAt(60, -5, -40);
 			controls.target.set(60, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh4":
-			controls.saveState();
 			camera.position.set(-60, 0, -20);
 			camera.lookAt(-60, -5, -40);
 			controls.target.set(-60, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh5":
-			controls.saveState();
 			camera.position.set(100, 0, -20);
 			camera.lookAt(100, -5, -40);
 			controls.target.set(100, -5, -40);
 			controls.update();
 			break;
 		case "sphereMesh6":
-			controls.saveState();
 			camera.position.set(-100, 0, -20);
 			camera.lookAt(-100, -5, -40);
 			controls.target.set(-100, -5, -40);
@@ -220,8 +216,10 @@ const backBut = document.createElement("button");
 backBut.className = "button hide";
 document.getElementById("backButton").append(backBut);
 
-let earthModel
-let EUmodel
+let earthModel;
+let cloud;
+let fastcloud;
+let EUmodel;
 
 // Load GLTF model
 const loader = new GLTFLoader();
@@ -243,8 +241,45 @@ loader.load(
 	}
 );
 
+loader.load(
+	'./models/cloud.glb', // Path to the .gltf file
+	(gltf) => {
+		cloud = gltf.scene;
+		cloud.castShadow = true;
+		cloud.receiveShadow = true;
+		cloud.position.set(0, -25, 0);
+    ball.add(cloud);
+    console.log('Model loaded:', gltf);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
+);
+
+loader.load(
+	'./models/fastclouds.glb', // Path to the .gltf file
+	(gltf) => {
+		fastcloud = gltf.scene;
+		fastcloud.castShadow = true;
+		fastcloud.receiveShadow = true;
+		fastcloud.position.set(0, -25, 0);
+    ball.add(fastcloud);
+    console.log('Model loaded:', gltf);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
+);
+
 ball.position.set(0, -1, 200);
 ball.add(sphereGroup);
+
 
 loader.load(
 	'./models/EUscene.glb', // Path to the .gltf file
@@ -316,7 +351,8 @@ function animate() {
 		backBut.className = "button show"
 	}
 
-
+  cloud.rotation.y += 0.0002;
+  fastcloud.rotation.y += 0.0005;
 
 }
 
