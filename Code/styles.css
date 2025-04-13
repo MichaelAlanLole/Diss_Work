@@ -92,3 +92,42 @@ body {
     width: 200px;
 }
 
+.file-container {
+    border: 2px solid #666;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+.location-container {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 4px;
+  }
+.location-container h3 {
+    margin: 0 0 4px;
+  }
+
+.Europe-container {
+    display: none;
+}
+
+.Africa-container {
+    display: none;
+}
+
+.Asia-container {
+    display: none;
+}
+
+.NorthAmerica-container {
+    display: none;
+}
+
+.SouthAmerica-container {
+    display: none;
+}
+
+.Oceania-container {
+    display: none;
+}
+

@@ -53,7 +53,6 @@ controls.target.set(0, 0, 200);
 controls.update();
 
 controls.enablePan = false;
-controls.enableDamping = true;
 controls.enableZoom = false;
 
 // Create Spheres For The Labels
@@ -163,63 +162,49 @@ window.addEventListener("mousemove", function (e) {
 	}
 });
 
-// Click On Spheres Event Listener, Moves Camera To The Set Location
-window.addEventListener("click", () => {
-	if (!hoveredObject) return;
-  
-  controls.saveState();
+window.addEventListener('click', function (e) {
+	mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
+	mousePos.y = - (e.clientY / this.window.innerHeight) * 2 + 1;
 
-	switch (hoveredObject.name) {
-		case "sphereMesh1":
-			camera.position.set(30, 5, -25);
-			camera.lookAt(30, -5, -28.5);
-			controls.target.set(30, -5, -28.5);
-			controls.update();
-			console.log(camera.position)
-			break;
-		case "sphereMesh2":
-			camera.position.set(-30, 0, -20);
-			camera.lookAt(-30, -5, -40);
-			controls.target.set(-30, -5, -40);
-			controls.update();
-			break;
-		case "sphereMesh3":
-			camera.position.set(60, 0, -20);
-			camera.lookAt(60, -5, -40);
-			controls.target.set(60, -5, -40);
-			controls.update();
-			break;
-		case "sphereMesh4":
-			camera.position.set(-60, 0, -20);
-			camera.lookAt(-60, -5, -40);
-			controls.target.set(-60, -5, -40);
-			controls.update();
-			break;
-		case "sphereMesh5":
-			camera.position.set(100, 0, -20);
-			camera.lookAt(100, -5, -40);
-			controls.target.set(100, -5, -40);
-			controls.update();
-			break;
-		case "sphereMesh6":
-			camera.position.set(-100, 0, -20);
-			camera.lookAt(-100, -5, -40);
-			controls.target.set(-100, -5, -40);
-			controls.update();
-			break;
-		default:
-			break;
+	raycaster.setFromCamera(mousePos, camera);
+	const intersects = raycaster.intersectObjects([ball, sphereGroup], true);
+	if (intersects.length > 0) {
+		const firstHit = intersects[0].object;
+		if (firstHit.name.startsWith("sphereMesh")) {
+
+			switch (firstHit.name) {
+				case "sphereMesh1":
+					Europe_Container.style.display = "block";
+					break;
+				case "sphereMesh2":
+					Africa_Container.style.display = "block";
+					break;
+				case "sphereMesh3":
+					Asia_Container.style.display = "block";
+					break;
+				case "sphereMesh4":
+					NorthAmerica_Container.style.display = "block";
+					break;
+				case "sphereMesh5":
+					SouthAmerica_Container.style.display = "block";
+					break;
+				case "sphereMesh6":
+					Oceania_Container.style.display = "block";
+					break;
+				default:
+					break;
+			}
+		}
 	}
 })
 
-const backBut = document.createElement("button");
-backBut.className = "button hide";
-document.getElementById("backButton").append(backBut);
 
 let earthModel;
 let cloud;
 let fastcloud;
-let EUmodel;
+let earthLoad = false;
+let cloudSlowLoad = false;
+let fastCloudLoad = false;
 
 // Load GLTF model
 const loader = new GLTFLoader();
@@ -232,6 +217,7 @@ loader.load(
 		earthModel.receiveShadow = true;
 		earthModel.position.set(0, -25, 200);
 		console.log('Model loaded:', gltf);
+		earthLoad = true;
 	},
 	(xhr) => {
 		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
@@ -248,8 +234,9 @@ loader.load(
 		cloud.castShadow = true;
 		cloud.receiveShadow = true;
 		cloud.position.set(0, -25, 0);
-    ball.add(cloud);
-    console.log('Model loaded:', gltf);
+		ball.add(cloud);
+		console.log('Model loaded:', gltf);
+		cloudSlowLoad = true;
 	},
 	(xhr) => {
 		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
@@ -266,8 +253,9 @@ loader.load(
 		fastcloud.castShadow = true;
 		fastcloud.receiveShadow = true;
 		fastcloud.position.set(0, -25, 0);
-    ball.add(fastcloud);
-    console.log('Model loaded:', gltf);
+		ball.add(fastcloud);
+		console.log('Model loaded:', gltf);
+		fastCloudLoad = true;
 	},
 	(xhr) => {
 		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
@@ -280,56 +268,110 @@ loader.load(
 ball.position.set(0, -1, 200);
 ball.add(sphereGroup);
 
+const xmlFiles = [
+	'./Data/Europe_air_quality_data.xml',
+	'./Data/Asia_air_quality_data.xml',
+	'./Data/Africa_air_quality_data.xml',
+	'./Data/NorthAmerica_air_quality_data.xml',
+	'./Data/SouthAmerica_air_quality_data.xml',
+	'./Data/Oceania_air_quality_data.xml'
+];
 
-loader.load(
-	'./models/EUscene.glb', // Path to the .gltf file
-	(gltf) => {
-		EUmodel = gltf.scene;
-		scene.add(EUmodel);
-		EUmodel.position.set(30, -5, -30);
-		console.log('Model loaded:', gltf);
-	},
-	(xhr) => {
-		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-	},
-	(error) => {
-		console.error('An error occurred while loading the model:', error);
-	}
+const fetchPromises = xmlFiles.map(file =>
+	fetch(file)
+		.then(response => {
+			if (!response.ok) {
+				throw new Error(`Failed to fetch ${file}: ${response.statusText}`);
+			}
+			return response.text();
+		})
+		.catch(error => {
+			console.error("Error fetching file:", file, error);
+			return ''; // Return empty string to continue Promise.all gracefully
+		})
 );
 
-const floorGeo = new THREE.BoxGeometry(20, 0.2, 10);
-const floorMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+const Europe_Container = document.getElementById('Europe-container');
+const Africa_Container = document.getElementById('Africa-container');
+const Asia_Container = document.getElementById('Asia-container');
+const SouthAmerica_Container = document.getElementById('SouthAmerica-container');
+const NorthAmerica_Container = document.getElementById('NorthAmerica-container');
+const Oceania_Container = document.getElementById('Oceania-container');
 
-const floor2 = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor2);
-floor2.position.set(-30, -5, -40);
+Promise.all(fetchPromises)
+	.then(fileContents => {
+		fileContents.forEach((xmlString, fileIndex) => {
+			if (!xmlString) {
+				console.warn(`No content for file ${xmlFiles[fileIndex]}`);
+				return;
+			}
 
-const floor3 = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor3);
-floor3.position.set(60, -5, -40);
+			const fileName = xmlFiles[fileIndex];
 
-const floor4 = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor4);
-floor4.position.set(-60, -5, -40);
+			let containerId = null;
 
-const floor5 = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor5);
-floor5.position.set(100, -5, -40);
+			if (fileName === './Data/Europe_air_quality_data.xml') { containerId = Europe_Container; }
+			else if (fileName === './Data/Africa_air_quality_data.xml') { containerId = Africa_Container; }
+			else if (fileName === './Data/Asia_air_quality_data.xml') { containerId = Asia_Container; }
+			else if (fileName === './Data/NorthAmerica_air_quality_data.xml') { containerId = NorthAmerica_Container; }
+			else if (fileName === './Data/SouthAmerica_air_quality_data.xml') { containerId = SouthAmerica_Container; }
+			else if (fileName === './Data/Oceania_air_quality_data.xml') { containerId = Oceania_Container; }
+			else {
+				console.warn(`No matching container for file: ${fileName}`);
+				return;
+			}
 
-const floor6 = new THREE.Mesh(floorGeo, floorMat);
-scene.add(floor6);
-floor6.position.set(-100, -5, -40);
+			const parser = new DOMParser();
+			const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
 
-// If Button Is Clicked, Sets Camera To Start Position And Hides Button
-backBut.addEventListener("click", () => {
-	controls.reset();
-	controls.update();
-	backBut.className = "button hide";
-})
+			// Check for parsing errors
+			const parserError = xmlDoc.querySelector('parsererror');
+			if (parserError) {
+				console.error(`Parsing error in ${xmlFiles[fileIndex]}:`, parserError.textContent);
+				return; // Skip this file
+			}
 
+			const locations = xmlDoc.getElementsByTagName('Location');
+			console.log(`File "${xmlFiles[fileIndex]}" has ${locations.length} locations`);
 
-// Event Listener Checks If camStart Is False, If It Is, It Wont Proceed
-// Checks The Key Pressed And Rotates Based On The Key
+			for (let i = 0; i < locations.length; i++) {
+				const locationElement = locations[i];
+
+				const cityNode = locationElement.getElementsByTagName('City')[0];
+				const countryNode = locationElement.getElementsByTagName('Country')[0];
+
+				const city = cityNode ? cityNode.textContent : 'Unknown City';
+				const country = countryNode ? countryNode.textContent : 'Unknown Country';
+
+				const locationTitle = document.createElement('h3');
+				locationTitle.textContent = `${city}, ${country}`;
+				containerId.appendChild(locationTitle);
+
+				const observation = locationElement.getElementsByTagName('CurrentObservation')[0];
+				const getValue = (tag) => {
+					const elem = observation.getElementsByTagName(tag)[0];
+					return elem ? elem.textContent : 'N/A';
+				};
+
+				const params = [
+					{ label: 'European AQI', tag: 'EuropeanAQI' },
+					{ label: 'PM10', tag: 'PM10' },
+					{ label: 'PM2.5', tag: 'PM2_5' },
+					{ label: 'Carbon Monoxide', tag: 'CarbonMonoxide' },
+					{ label: 'Nitrogen Dioxide', tag: 'NitrogenDioxide' }
+				];
+
+				params.forEach(param => {
+					const p = document.createElement('p');
+					p.textContent = `${param.label}: ${observation ? getValue(param.tag) : 'N/A'}`;
+					containerId.appendChild(p);
+				});
+			}
+		});
+	})
+	.catch(error => {
+		console.error('Error fetching or processing files:', error);
+	});
 
 // Animate Function
 function animate() {
@@ -342,17 +384,10 @@ function animate() {
 	// Renders The Labels Each Frame
 	label_renderer.render(scene, camera);
 
-
-	if (camera.position.z > -20) {
-		controls.enableRotate = true;
-	} else {
-		controls.enableRotate = false;
-		console.log("no more movement")
-		backBut.className = "button show"
+	if (fastCloudLoad && earthLoad && cloudSlowLoad === true) {
+		cloud.rotation.y += 0.0002;
+		fastcloud.rotation.y += 0.0005;
 	}
-
-  cloud.rotation.y += 0.0002;
-  fastcloud.rotation.y += 0.0005;
 
 }
 
