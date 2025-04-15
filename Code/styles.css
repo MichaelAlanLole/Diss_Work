@@ -70,7 +70,9 @@ body {
     box-shadow: 0 0 10px 2px;
 }
 
-.strt-btn, .answr, .next {
+.strt-btn,
+.answr,
+.next {
     width: 100px;
     height: 50px;
 }
@@ -96,38 +98,110 @@ body {
     border: 2px solid #666;
     padding: 10px;
     margin-bottom: 20px;
-  }
+}
+
 .location-container {
     border: 1px solid #ccc;
     padding: 8px;
     margin: 8px 0;
     border-radius: 4px;
-  }
+}
+
 .location-container h3 {
     margin: 0 0 4px;
+}
+
+#Europe-container,
+#Africa-container,
+#Asia-container,
+#SouthAmerica-container,
+#NorthAmerica-container,
+#Oceania-container {
+    /* Use a grid layout */
+    display: none;
+    position: absolute;
+    top: 50px;
+    /* adjust as needed */
+    left: 50px;
+    /* adjust as needed */
+
+    /* Control width and height so you get your own scrollbar */
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    /* Ensure this element is on top of the canvas */
+    z-index: 9999;
+
+    /* Basic styling so it’s clear */
+    background-color: rgba(24, 28, 20, 0.8);
+    border: 2px solid #205781;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 10px;
+    display: none;
+    /* toggled by JavaScript (“block” when sphere is clicked) */
+}
+
+/* Make each child div block-level and stack with spacing: */
+#Europe-container>div,
+#Africa-container>div,
+#Asia-container>div,
+#SouthAmerica-container>div,
+#NorthAmerica-container>div,
+#Oceania-container>div {
+    margin-bottom: 10px;
+}
+
+/* The clickable city/country header */
+.dropdown-header {
+    font-weight: bold;
+    cursor: pointer;     /* so the user knows they can click it */
+    padding: 20px;
+    margin-bottom: 4px;
+    background-color: #123458;
+    color: #fff;
+    border-radius: 10px;
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* The color box at the right or next to the text */
+  .air-quality-box {
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    display: inline-block;
+    border-radius: 3px;
   }
 
-.Europe-container {
-    display: none;
+/* The container for the extra data. Hidden by default. */
+.dropdown-details {
+    display: none;       /* hidden by default */
+    margin-left: 1em;    /* indent so it looks nested under the header */
 }
 
-.Africa-container {
-    display: none;
+.overlay-controls {
+    padding-top: 10px;
 }
 
-.Asia-container {
-    display: none;
+.titleSpan {
+    width: 200px;
 }
 
-.NorthAmerica-container {
-    display: none;
+.dropdown-details.show {
+    display: block; /* visible when .show is toggled on */
+  }
+
+.green {
+    background-color: green;
 }
 
-.SouthAmerica-container {
-    display: none;
+.yellow {
+    background-color: yellow;
 }
 
-.Oceania-container {
-    display: none;
+.orange {
+    background-color: orange;
 }
-

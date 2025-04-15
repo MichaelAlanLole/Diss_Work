@@ -162,6 +162,23 @@ window.addEventListener("mousemove", function (e) {
 	}
 });
 
+function hideAllContainers() {
+	Europe_Container.style.display = "none";
+	Africa_Container.style.display = "none";
+	Asia_Container.style.display = "none";
+	SouthAmerica_Container.style.display = "none";
+	NorthAmerica_Container.style.display = "none";
+	Oceania_Container.style.display = "none";
+}
+
+const closeButton = document.querySelectorAll(".close-overlay");
+
+closeButton.forEach(button => {
+	button.addEventListener('click', () => {
+		hideAllContainers();
+	})
+})
+
 window.addEventListener('click', function (e) {
 	mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
 	mousePos.y = - (e.clientY / this.window.innerHeight) * 2 + 1;
@@ -172,24 +189,26 @@ window.addEventListener('click', function (e) {
 		const firstHit = intersects[0].object;
 		if (firstHit.name.startsWith("sphereMesh")) {
 
+			hideAllContainers();
+
 			switch (firstHit.name) {
 				case "sphereMesh1":
-					Europe_Container.style.display = "block";
+					Europe_Container.style.display = "inline";
 					break;
 				case "sphereMesh2":
-					Africa_Container.style.display = "block";
+					Africa_Container.style.display = "inline";
 					break;
 				case "sphereMesh3":
-					Asia_Container.style.display = "block";
+					Asia_Container.style.display = "inline";
 					break;
 				case "sphereMesh4":
-					NorthAmerica_Container.style.display = "block";
+					NorthAmerica_Container.style.display = "inline";
 					break;
 				case "sphereMesh5":
-					SouthAmerica_Container.style.display = "block";
+					SouthAmerica_Container.style.display = "inline";
 					break;
 				case "sphereMesh6":
-					Oceania_Container.style.display = "block";
+					Oceania_Container.style.display = "inline";
 					break;
 				default:
 					break;
@@ -337,21 +356,73 @@ Promise.all(fetchPromises)
 			for (let i = 0; i < locations.length; i++) {
 				const locationElement = locations[i];
 
+				const locationDiv = document.createElement('div');
+				locationDiv.classList.add('locationDiv');
+
 				const cityNode = locationElement.getElementsByTagName('City')[0];
 				const countryNode = locationElement.getElementsByTagName('Country')[0];
-
 				const city = cityNode ? cityNode.textContent : 'Unknown City';
 				const country = countryNode ? countryNode.textContent : 'Unknown Country';
-
-				const locationTitle = document.createElement('h3');
-				locationTitle.textContent = `${city}, ${country}`;
-				containerId.appendChild(locationTitle);
 
 				const observation = locationElement.getElementsByTagName('CurrentObservation')[0];
 				const getValue = (tag) => {
 					const elem = observation.getElementsByTagName(tag)[0];
 					return elem ? elem.textContent : 'N/A';
 				};
+
+				const aqiString = getValue('EuropeanAQI');
+				let aqiValue = parseInt(aqiString, 10);
+				if (isNaN(aqiValue)) aqiValue = 0;
+
+				let aqiStatus = 'Unknown';
+				let aqiColor = '#999';
+				if (aqiValue <= 20) {
+					aqiStatus = 'Good';
+					aqiColor = 'green';
+				} else if (aqiValue <= 40) {
+					aqiStatus = 'Fair';
+					aqiColor = 'yellow';
+				} else if (aqiValue <= 60) {
+					aqiStatus = 'Moderate';
+					aqiColor = 'orange';
+				} else if (aqiValue <= 80) {
+					aqiStatus = 'Poor';
+					aqiColor = 'red';
+				} else if (aqiValue <= 100) {
+					aqiStatus = 'Very Poor';
+					aqiColor = 'purple';
+				} else {
+					aqiStatus = 'Hazardous';
+					aqiColor = 'maroon';
+				}
+
+				const header = document.createElement('div');
+				header.classList.add('dropdown-header');
+				locationDiv.appendChild(header);
+
+				const titleSpan = document.createElement('span');
+				titleSpan.textContent = `${city}, ${country}`;
+				titleSpan.classList.add('titleSpan');
+				header.appendChild(titleSpan);
+
+				const qualityDiv = document.createElement('div');
+				qualityDiv.classList.add('qualityDiv');
+				header.appendChild(qualityDiv);
+
+				const qualityLabel = document.createElement('span');
+				qualityLabel.classList.add('air-quality-label');
+				qualityLabel.textContent = aqiStatus;
+				qualityDiv.appendChild(qualityLabel);
+
+				// Create a colored square box that visually represents the AQI
+				const colorBox = document.createElement('span');
+				colorBox.classList.add('air-quality-box');
+				colorBox.style.backgroundColor = aqiColor;
+				qualityDiv.appendChild(colorBox);
+
+				const detailsDiv = document.createElement('div');
+				detailsDiv.classList.add('dropdown-details');
+				locationDiv.appendChild(detailsDiv);
 
 				const params = [
 					{ label: 'European AQI', tag: 'EuropeanAQI' },
@@ -362,10 +433,20 @@ Promise.all(fetchPromises)
 				];
 
 				params.forEach(param => {
+					const header = document.createElement('h3');
+					header.textContent = `${param.label}:`;
 					const p = document.createElement('p');
-					p.textContent = `${param.label}: ${observation ? getValue(param.tag) : 'N/A'}`;
-					containerId.appendChild(p);
+					p.textContent = `${observation ? getValue(param.tag) : 'N/A'}`;
+					detailsDiv.appendChild(header);
+					detailsDiv.appendChild(p);
 				});
+
+				header.addEventListener('click', () => {
+					// Toggle the "show" class on the details
+					detailsDiv.classList.toggle('show');
+				});
+
+				containerId.appendChild(locationDiv);
 			}
 		});
 	})
