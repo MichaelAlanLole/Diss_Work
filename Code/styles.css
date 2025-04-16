@@ -59,7 +59,7 @@ body {
     pointer-events: auto;
 }
 
-.question-container {
+.questions {
     position: absolute;
     width: 800px;
     max-width: 80%;
@@ -96,29 +96,24 @@ body {
     width: 200px;
 }
 
-.file-container {
+.files {
     border: 2px solid #666;
     padding: 10px;
     margin-bottom: 20px;
 }
 
-.location-container {
+.locations {
     border: 1px solid #ccc;
     padding: 8px;
     margin: 8px 0;
     border-radius: 4px;
 }
 
-.location-container h3 {
+.locations h3 {
     margin: 0 0 4px;
 }
 
-#Europe-container,
-#Africa-container,
-#Asia-container,
-#SouthAmerica-container,
-#NorthAmerica-container,
-#Oceania-container {
+.continents {
     /* Use a grid layout */
     display: none;
     position: absolute;
@@ -139,25 +134,22 @@ body {
     background-color: rgba(24, 28, 20, 0.8);
     border: 2px solid #205781;
     color: #ffffff;
-    border-radius: 20px;
+    border-radius: 10px;
     padding: 10px;
     display: none;
+
     /* toggled by JavaScript (“block” when sphere is clicked) */
 }
 
 /* Make each child div block-level and stack with spacing: */
-#Europe-container>div,
-#Africa-container>div,
-#Asia-container>div,
-#SouthAmerica-container>div,
-#NorthAmerica-container>div,
-#Oceania-container>div {
+.continents>div {
     margin-bottom: 10px;
 }
 
 .locationDiv {
     background-color: #123458;
     border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 /* The clickable city/country header */
@@ -176,6 +168,8 @@ body {
 
 .locationDiv:hover {
     background-color: #205781;
+
+    transform: translateY(-2px);
 }
 
 /* The color box at the right or next to the text */
@@ -301,15 +295,21 @@ body {
     border-radius: 10px;
     color: #fff;
     overflow: hidden;
-  }
-  
-  /* Header is always visible and clickable */
-  .aqi-scale-header {
+}
+
+/* Header is always visible and clickable */
+.aqi-scale-header {
     cursor: pointer;
     padding: 1rem;
-    background-color: #205781;
+    background-color: #123458;
     text-align: center;
-  }
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.aqi-scale-dropdown:not(.open) .aqi-scale-header:hover {
+    background-color: #205781;
+    transform: translateY(-2px);
+}
 
 .aqi-scale-header h4 {
     margin-bottom: 0px;
@@ -318,43 +318,107 @@ body {
 .aqi-scale-header p {
     margin-top: 0px;
 }
-  
-  /* Details initially hidden */
-  .aqi-scale-details {
+
+/* Details initially hidden */
+.aqi-scale-details {
     max-height: 0;
     opacity: 0;
-  }
-  
-  /* When open, details expand */
-  .aqi-scale-dropdown.open .aqi-scale-details {
+}
+
+.aqi-scale-dropdown.open .aqi-scale-header {
+    background-color: #205781;
+}
+
+/* When open, details expand */
+.aqi-scale-dropdown.open .aqi-scale-details {
     /* Set a max-height large enough to show all items */
     max-height: 500px;
     opacity: 1;
-    padding: 0px 1rem 1rem 1rem; 
+    padding: 0px 1rem 1rem 1rem;
     background-color: #205781;
-  }
-  
-  /* Individual AQI items styling */
-  .aqi-item {
+}
+
+/* Individual AQI items styling */
+.aqi-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.3rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  .aqi-item:last-child {
+}
+
+.aqi-item:last-child {
     border-bottom: none;
-  }
-  
-  .aqi-text {
+}
+
+.aqi-text {
     flex: 1;
-  }
-  
-  .air-quality-box-guide {
+}
+
+.air-quality-box-guide {
     width: 20px;
     height: 20px;
     border-radius: 3px;
     margin-left: 10px;
     flex-shrink: 0;
-  }
+}
+
+.close-overlay {
+    display: inline-block;
+    padding: 1rem 2rem;
+    /* More padding for a bulkier look */
+    font-size: 1.2rem;
+    /* Increase font size for readability */
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+    background-color: #123458;
+    border: none;
+    border-radius: 8px;
+    /* Rounded corners for a softer look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.close-overlay:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    /* A slight lift effect on hover */
+}
+
+.continents::-webkit-scrollbar {
+    width: 12px;
+}
+
+.continents::-webkit-scrollbar-button {
+    display: none;
+}
+
+.continents::-webkit-scrollbar-track {
+    background: #205781;
+    border-top-left-radius: 0px !important;    /* Force top corners to be squared */
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.continents::-webkit-scrollbar-thumb {
+    background-color: #205781;
+    border-radius: 10px;
+    border: 3px solid #205781;
+}
+
+.continents::-webkit-scrollbar-thumb:hover {
+    background-color: #555;  /* Change hover color if desired */
+}
+
+.continents {
+    scrollbar-color: #205781 #123458;
+    overflow-y: auto;
+    /* If you have a border radius on .continents, the scrollbar might follow it.  
+       You might consider wrapping your scrollable content inside another element 
+       that does not have border radius. */
+
+}
