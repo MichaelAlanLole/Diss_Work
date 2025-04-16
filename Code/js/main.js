@@ -4,9 +4,12 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { round } from 'three/tsl';
 
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
+
+const loader = new GLTFLoader();
 
 const CtextureLoader = new THREE.CubeTextureLoader()
 const skyboxTexture = CtextureLoader.load([
@@ -52,47 +55,64 @@ camera.lookAt(0, 0, 200);
 controls.target.set(0, 0, 200);
 controls.update();
 
+controls.enableRotate = false;
+
+controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 
-// Create Spheres For The Labels
-function createCpointMesh(name, x, y, z) {
-	const geo = new THREE.SphereGeometry(1);
-	const mat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF });
-	const mesh = new THREE.Mesh(geo, mat);
-	mesh.position.set(x, y, z);
-	mesh.castShadow = true;
-	mesh.name = name;
-	return mesh;
+const popUpClose = document.getElementById('close-pop-up');
+popUpClose.addEventListener('click', () => {
+	document.getElementById('pop-up').style.display = 'none';
+	controls.enableRotate = true;
+})
+
+function createContinentMarkers(name, x, y, z) {
+	// Make sure the model is loaded before cloning!
+	if (!continentModel) return null;
+	const marker = continentModel.clone();
+	marker.position.set(x, y, z);
+	marker.name = name; // e.g. "continentMarker1"
+	return marker;
 }
-
-// Create Group To Hold Spheres
-const sphereGroup = new THREE.Group();
-
-// Create Spheres, Give Them A Name And A X, Y, Z And Add To The Group
-const sphereMesh1 = createCpointMesh("sphereMesh1", -19, 22, 5);
-sphereGroup.add(sphereMesh1);
-
-const sphereMesh2 = createCpointMesh("sphereMesh2", 0, 22, 20);
-sphereGroup.add(sphereMesh2);
-
-const sphereMesh3 = createCpointMesh("sphereMesh3", -27, 5, 10);
-sphereGroup.add(sphereMesh3);
-
-const sphereMesh4 = createCpointMesh("sphereMesh4", 3, 21, -22);
-sphereGroup.add(sphereMesh4);
-
-const sphereMesh5 = createCpointMesh("sphereMesh5", -14, -5, -26);
-sphereGroup.add(sphereMesh5);
-
-const sphereMesh6 = createCpointMesh("sphereMesh6", 17, -12, 21);
-sphereGroup.add(sphereMesh6);
-
-// Adds Group To Scene
-scene.add(sphereGroup);
 
 const ball = new THREE.Mesh(new THREE.SphereGeometry(24, 50, 50), new THREE.MeshBasicMaterial());
 scene.add(ball);
+
+const markerGroup = new THREE.Group();
+
+let continentModel;
+loader.load(
+	'./models/Pin.glb', // Path to the .gltf file
+	(gltf) => {
+		continentModel = gltf.scene;
+
+		// Create markers for the continents at desired positions
+		const marker1 = createContinentMarkers("continentMarker1", -19, 22, 5);
+		const marker2 = createContinentMarkers("continentMarker2", 0, 22, 20);
+		const marker3 = createContinentMarkers("continentMarker3", -27, 5, 10);
+		const marker4 = createContinentMarkers("continentMarker4", 3, 21, -22);
+		const marker5 = createContinentMarkers("continentMarker5", -14, -5, -26);
+		const marker6 = createContinentMarkers("continentMarker6", 17, -12, 21);
+
+		// Add markers to the group (making sure each marker exists)
+		if (marker1) markerGroup.add(marker1);
+		if (marker2) markerGroup.add(marker2);
+		if (marker3) markerGroup.add(marker3);
+		if (marker4) markerGroup.add(marker4);
+		if (marker5) markerGroup.add(marker5);
+		if (marker6) markerGroup.add(marker6);
+
+		// Add the marker group to the scene
+		ball.add(markerGroup);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
+)
 
 // Label Creation
 
@@ -113,52 +133,65 @@ let hoveredObject = null;
 
 // Event Listener For The Raycaster
 window.addEventListener("mousemove", function (e) {
-	mousePos.x = (e.clientX / this.window.innerWidth) * 2 - 1;
-	mousePos.y = - (e.clientY / this.window.innerHeight) * 2 + 1;
+	const popUpDisplay = window.getComputedStyle(document.getElementById('pop-up')).display;
 
-	raycaster.setFromCamera(mousePos, camera);
-	const intersects = raycaster.intersectObjects([ball, sphereGroup], true);
-	if (intersects.length > 0) {
-		const firstHit = intersects[0].object;
-		if (firstHit.name.startsWith("sphereMesh")) {
-			hoveredObject = firstHit;
-			labelP.className = "tooltip show";
+	if (popUpDisplay === 'none') {
+		mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
+		mousePos.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
-			const pos = new THREE.Vector3();
-			hoveredObject.getWorldPosition(pos);
+		raycaster.setFromCamera(mousePos, camera);
+		const intersects = raycaster.intersectObjects([ball, markerGroup], true);
+		if (intersects.length > 0) {
+			const firstHit = intersects[0].object;
+			let obj = firstHit;
 
-			cPointLabel.position.copy(pos).add(new THREE.Vector3(0, 10, 0));
+			while (obj) {
+				if (obj.name && obj.name.startsWith("continentMarker")) {
+					break;
+				}
+				obj = obj.parent;
+			}
+			if (obj && obj.name && obj.name.startsWith("continentMarker")) {
+				hoveredObject = obj;
+				labelP.className = "tooltip show";
 
-			// Set tooltip text based on the hovered object's name
-			switch (hoveredObject.name) {
-				case "sphereMesh1":
-					labelP.textContent = "Click to reveal Europe";
-					break;
-				case "sphereMesh2":
-					labelP.textContent = "Click to reveal Asia";
-					break;
-				case "sphereMesh3":
-					labelP.textContent = "Click to reveal Africa";
-					break;
-				case "sphereMesh4":
-					labelP.textContent = "Click to reveal North America";
-					break;
-				case "sphereMesh5":
-					labelP.textContent = "Click to reveal South America";
-					break;
-				case "sphereMesh6":
-					labelP.textContent = "Click to reveal Oceania";
-					break;
-				default:
-					break;
+				const pos = new THREE.Vector3();
+				hoveredObject.getWorldPosition(pos);
+
+				cPointLabel.position.copy(pos).add(new THREE.Vector3(0, 10, 0));
+
+				// Set tooltip text based on the hovered object's name
+				switch (hoveredObject.name) {
+					case "continentMarker1":
+						labelP.textContent = "Click to reveal Europe";
+						break;
+					case "continentMarker2":
+						labelP.textContent = "Click to reveal Asia";
+						break;
+					case "continentMarker3":
+						labelP.textContent = "Click to reveal Africa";
+						break;
+					case "continentMarker4":
+						labelP.textContent = "Click to reveal North America";
+						break;
+					case "continentMarker5":
+						labelP.textContent = "Click to reveal South America";
+						break;
+					case "continentMarker6":
+						labelP.textContent = "Click to reveal Oceania";
+						break;
+					default:
+						break;
+				}
+
+			} else {
+				hoveredObject = null;
+				labelP.className = "tooltip hide";
 			}
 		} else {
 			hoveredObject = null;
 			labelP.className = "tooltip hide";
 		}
-	} else {
-		hoveredObject = null;
-		labelP.className = "tooltip hide";
 	}
 });
 
@@ -184,30 +217,37 @@ window.addEventListener('click', function (e) {
 	mousePos.y = - (e.clientY / this.window.innerHeight) * 2 + 1;
 
 	raycaster.setFromCamera(mousePos, camera);
-	const intersects = raycaster.intersectObjects([ball, sphereGroup], true);
+	const intersects = raycaster.intersectObjects([ball, markerGroup], true);
 	if (intersects.length > 0) {
-		const firstHit = intersects[0].object;
-		if (firstHit.name.startsWith("sphereMesh")) {
+		let obj = intersects[0].object;
+
+		while (obj) {
+			if (obj.name && obj.name.startsWith("continentMarker")) {
+				break;
+			}
+			obj = obj.parent;
+		}
+		if (obj && obj.name && obj.name.startsWith("continentMarker")) {
 
 			hideAllContainers();
 
-			switch (firstHit.name) {
-				case "sphereMesh1":
+			switch (obj.name) {
+				case "continentMarker1":
 					Europe_Container.style.display = "inline";
 					break;
-				case "sphereMesh2":
-					Africa_Container.style.display = "inline";
-					break;
-				case "sphereMesh3":
+				case "continentMarker2":
 					Asia_Container.style.display = "inline";
 					break;
-				case "sphereMesh4":
+				case "continentMarker3":
+					Africa_Container.style.display = "inline";
+					break;
+				case "continentMarker4":
 					NorthAmerica_Container.style.display = "inline";
 					break;
-				case "sphereMesh5":
+				case "continentMarker5":
 					SouthAmerica_Container.style.display = "inline";
 					break;
-				case "sphereMesh6":
+				case "continentMarker6":
 					Oceania_Container.style.display = "inline";
 					break;
 				default:
@@ -225,8 +265,6 @@ let earthLoad = false;
 let cloudSlowLoad = false;
 let fastCloudLoad = false;
 
-// Load GLTF model
-const loader = new GLTFLoader();
 loader.load(
 	'./models/low_poly_earthv2-3.glb', // Path to the .gltf file
 	(gltf) => {
@@ -285,7 +323,7 @@ loader.load(
 );
 
 ball.position.set(0, -1, 200);
-ball.add(sphereGroup);
+ball.add(markerGroup);
 
 const xmlFiles = [
 	'./Data/Europe_air_quality_data.xml',
@@ -371,24 +409,24 @@ Promise.all(fetchPromises)
 				};
 
 				const aqiString = getValue('EuropeanAQI');
-				let aqiValue = parseInt(aqiString, 10);
-				if (isNaN(aqiValue)) aqiValue = 0;
+				let value = parseInt(aqiString, 10);
+				if (isNaN(value)) value = 0;
 
 				let aqiStatus = 'Unknown';
 				let aqiColor = '#999';
-				if (aqiValue <= 20) {
+				if (value <= 20) {
 					aqiStatus = 'Good';
 					aqiColor = 'green';
-				} else if (aqiValue <= 40) {
+				} else if (value <= 40) {
 					aqiStatus = 'Fair';
 					aqiColor = 'yellow';
-				} else if (aqiValue <= 60) {
+				} else if (value <= 60) {
 					aqiStatus = 'Moderate';
 					aqiColor = 'orange';
-				} else if (aqiValue <= 80) {
+				} else if (value <= 80) {
 					aqiStatus = 'Poor';
 					aqiColor = 'red';
-				} else if (aqiValue <= 100) {
+				} else if (value <= 100) {
 					aqiStatus = 'Very Poor';
 					aqiColor = 'purple';
 				} else {
@@ -409,10 +447,12 @@ Promise.all(fetchPromises)
 				qualityDiv.classList.add('qualityDiv');
 				header.appendChild(qualityDiv);
 
-				const qualityLabel = document.createElement('span');
-				qualityLabel.classList.add('air-quality-label');
-				qualityLabel.textContent = aqiStatus;
-				qualityDiv.appendChild(qualityLabel);
+				const aqiRounded = parseFloat(aqiString).toFixed(2);
+
+				const aqiValueLine = document.createElement('div');
+				aqiValueLine.classList.add('dropdown-eaqi'); // You can add styling rules for this class in your CSS
+				aqiValueLine.textContent = `AQI: ${aqiRounded}`;
+				qualityDiv.appendChild(aqiValueLine);
 
 				// Create a colored square box that visually represents the AQI
 				const colorBox = document.createElement('span');
@@ -424,26 +464,116 @@ Promise.all(fetchPromises)
 				detailsDiv.classList.add('dropdown-details');
 				locationDiv.appendChild(detailsDiv);
 
+
 				const params = [
-					{ label: 'European AQI', tag: 'EuropeanAQI' },
 					{ label: 'PM10', tag: 'PM10' },
 					{ label: 'PM2.5', tag: 'PM2_5' },
 					{ label: 'Carbon Monoxide', tag: 'CarbonMonoxide' },
 					{ label: 'Nitrogen Dioxide', tag: 'NitrogenDioxide' }
 				];
 
+				function pm10Value(value) {
+					if (value <= 20) {
+						return 'green'
+					} else if (value <= 40) {
+						return 'yellow'
+					} else if (value <= 50) {
+						return 'orange'
+					} else if (value <= 100) {
+						return 'red'
+					} else if (value <= 150) {
+						return 'purple'
+					} else {
+						return 'maroon'
+					}
+				}
+
+				function pm25Value(value) {
+					if (value <= 10) {
+						return 'green'
+					} else if (value <= 20) {
+						return 'yellow'
+					} else if (value <= 25) {
+						return 'orange'
+					} else if (value <= 50) {
+						return 'red'
+					} else if (value <= 75) {
+						return 'purple'
+					} else {
+						return 'maroon'
+					}
+				}
+
+				function NitrogenValue(value) {
+					if (value <= 40) {
+						return 'green'
+					} else if (value <= 90) {
+						return 'yellow'
+					} else if (value <= 120) {
+						return 'orange'
+					} else if (value <= 230) {
+						return 'red'
+					} else if (value <= 340) {
+						return 'purple'
+					} else {
+						return 'maroon'
+					}
+				}
+
 				params.forEach(param => {
+					const paramDiv = document.createElement('div');
+					paramDiv.classList.add('paramDiv');
 					const header = document.createElement('h3');
 					header.textContent = `${param.label}:`;
 					const p = document.createElement('p');
-					p.textContent = `${observation ? getValue(param.tag) : 'N/A'}`;
-					detailsDiv.appendChild(header);
-					detailsDiv.appendChild(p);
+					let valueText = 'N/A';
+
+					let paramColorBox = document.createElement('span');
+					paramColorBox.classList.add('air-quality-box');
+
+					if (observation) {
+						const rawValue = getValue(param.tag);
+						const roundValue = parseFloat(rawValue);
+
+						if (!isNaN(roundValue)) {
+							valueText = roundValue.toFixed(2);
+
+							let paramColor
+
+							if (param.label === 'PM10') {
+								paramColor = pm10Value(roundValue);
+								paramColorBox.style.backgroundColor = paramColor;
+							} else if (param.label === 'PM2.5') {
+								paramColor = pm25Value(roundValue);
+								paramColorBox.style.backgroundColor = paramColor;
+							} else if (param.label === 'Nitrogen Dioxide') {
+								paramColor = NitrogenValue(roundValue);
+								paramColorBox.style.backgroundColor = paramColor;
+							} else {
+								paramColorBox.style.display = 'none';
+							}
+						} else {
+							valueText = 'N/A';
+						}
+					}
+					p.textContent = valueText;
+
+					const lilDiv = document.createElement('div');
+					lilDiv.classList.add('lilDiv');
+
+					paramDiv.appendChild(header);
+
+					lilDiv.appendChild(p);
+					lilDiv.appendChild(paramColorBox);
+
+					paramDiv.appendChild(lilDiv);
+					detailsDiv.appendChild(paramDiv);
 				});
 
 				header.addEventListener('click', () => {
 					// Toggle the "show" class on the details
 					detailsDiv.classList.toggle('show');
+					header.classList.toggle('border');
 				});
 
 				containerId.appendChild(locationDiv);
@@ -453,6 +583,13 @@ Promise.all(fetchPromises)
 	.catch(error => {
 		console.error('Error fetching or processing files:', error);
 	});
+
+	document.querySelectorAll('.aqi-scale-header').forEach(header => {
+		header.addEventListener('click', function () {
+		  // Toggle the "open" class on the parent container of this header
+		  header.parentElement.classList.toggle('open');
+		});
+	  });
 
 // Animate Function
 function animate() {

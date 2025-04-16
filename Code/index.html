@@ -3,6 +3,13 @@
 
 <head>
 	<meta charset="utf-8">
+
+	<!-- fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+		rel="stylesheet">
+
 	<title>Interactive Experience</title>
 	<link rel="stylesheet" href="styles.css" />
 </head>
@@ -10,11 +17,50 @@
 <body>
 	<script type="module" src="/js/main.js"></script>
 	<!-- <a href="interactionTwo.html">Here</a>-->
+	<div id="pop-up">
+		<h2>Air Quality Around The Globe</h2>
+		<p>Welcome to my interactive experience on air pollution, focusing on vehicle emissions like nitrogen dioxide
+			(NO₂) and particulate matter (PM2.5), and how they impact urban areas.</p>
+		<p>Please click on any continent to view the air quality of its cities and learn about its causes.</p>
+		<button id="close-pop-up">Close</button>
+	</div>
 	<div class="continent-container">
 		<div id="Europe-container">
 			<div class="overlay-controls">
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
+			</div>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="Africa-container">
@@ -22,14 +68,37 @@
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
 			</div>
-			<div>
-				<span class="aqi-scale">AQI Scale</span>
-				<span>0-20 Good <span class="air-quality-box green"></span></span>
-				<span>20-40 Fair <span class="air-quality-box yellow"></span></span>
-				<span>40-60 Morderate <span class="air-quality-box orange"></span></span>
-				<span>60-80 Poor <span class="air-quality-box red"></span></span>
-				<span>80 - 100 Very poor <span class="air-quality-box purple"></span></span>
-				<span>100+ Hazordous <span class="air-quality-box maroon"></span></span>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="Asia-container">
@@ -37,11 +106,75 @@
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
 			</div>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div id="NorthAmerica-container">
 			<div class="overlay-controls">
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
+			</div>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="SouthAmerica-container">
@@ -49,11 +182,75 @@
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
 			</div>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div id="Oceania-container">
 			<div class="overlay-controls">
 				<button class="close-overlay">Close</button>
 				<button>Help</button>
+			</div>
+			<div class="aqi-scale-dropdown">
+				<div class="aqi-scale-header">
+					<h4>AQI Scale</h4>
+					<p>(Air Quality Index)</p>
+				</div>
+				<div class="aqi-scale-details">
+					<div class="aqi-item">
+						<span class="aqi-text">0-20 Good</span>
+						<span class="air-quality-box-guide green"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">20-40 Fair</span>
+						<span class="air-quality-box-guide yellow"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">40-60 Moderate</span>
+						<span class="air-quality-box-guide orange"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">60-80 Poor</span>
+						<span class="air-quality-box-guide red"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">80-100 Very Poor</span>
+						<span class="air-quality-box-guide purple"></span>
+					</div>
+					<div class="aqi-item">
+						<span class="aqi-text">100+ Hazardous</span>
+						<span class="air-quality-box-guide maroon"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

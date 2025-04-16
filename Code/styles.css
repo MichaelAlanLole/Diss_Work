@@ -15,7 +15,9 @@ body {
 }
 
 .tooltip {
-    background-color: black;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    background-color: #123458;
     color: white;
     padding: 10px;
     position: relative;
@@ -30,7 +32,7 @@ body {
     content: "";
     width: 20px;
     height: 20px;
-    background-color: black;
+    background-color: #123458;
     top: 90%;
     left: 50%;
     transform: rotateZ(45deg) translateX(-50%);
@@ -122,7 +124,7 @@ body {
     position: absolute;
     top: 50px;
     /* adjust as needed */
-    left: 50px;
+    left: 60px;
     /* adjust as needed */
 
     /* Control width and height so you get your own scrollbar */
@@ -153,33 +155,73 @@ body {
     margin-bottom: 10px;
 }
 
+.locationDiv {
+    background-color: #123458;
+    border-radius: 10px;
+}
+
 /* The clickable city/country header */
 .dropdown-header {
-    font-weight: bold;
-    cursor: pointer;     /* so the user knows they can click it */
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    /* so the user knows they can click it */
     padding: 20px;
-    margin-bottom: 4px;
-    background-color: #123458;
     color: #fff;
     border-radius: 10px;
-    display: flex; 
+    display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-  
-  /* The color box at the right or next to the text */
-  .air-quality-box {
+}
+
+.locationDiv:hover {
+    background-color: #205781;
+}
+
+/* The color box at the right or next to the text */
+.air-quality-box {
     width: 16px;
-    height: 16px;
+    height: 19px;
     margin-left: 8px;
     display: inline-block;
     border-radius: 3px;
-  }
+}
 
 /* The container for the extra data. Hidden by default. */
 .dropdown-details {
-    display: none;       /* hidden by default */
-    margin-left: 1em;    /* indent so it looks nested under the header */
+    display: none;
+    /* hidden by default */
+    padding: 0px 20px 20px 20px;
+    border-radius: 0px 0px 10px 10px;
+    /* indent so it looks nested under the header */
+}
+
+.dropdown-details h3 {
+    font-size: 1rem;
+}
+
+#pop-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 800px;
+    max-height: 60vh;
+
+    padding: 20px;
+
+    background-color: #123458;
+    border: 2px solid #205781;
+    color: white;
+    border-radius: 20px;
+
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+}
+
+#pop-up h2 {
+    margin-top: 0px;
 }
 
 .overlay-controls {
@@ -188,11 +230,14 @@ body {
 
 .titleSpan {
     width: 200px;
+    font-size: 1.1rem;
+    font-weight: 500;
 }
 
 .dropdown-details.show {
-    display: block; /* visible when .show is toggled on */
-  }
+    display: block;
+    font-family: "Montserrat", sans-serif;
+}
 
 .green {
     background-color: green;
@@ -205,3 +250,111 @@ body {
 .orange {
     background-color: orange;
 }
+
+.red {
+    background-color: red;
+}
+
+.purple {
+    background-color: purple;
+}
+
+.maroon {
+    background-color: maroon;
+}
+
+.qualityDiv,
+.dropdown-eaqi {
+    font-size: 1rem;
+}
+
+.qualityDiv {
+    display: flex;
+}
+
+.paramDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #205781;
+}
+
+.paramDiv h3,
+.paramDiv p {
+    margin: 0;
+    /* Remove default margins to fine tune the layout */
+    padding: 0;
+}
+
+.lilDiv {
+    display: flex;
+    justify-content: space-between;
+}
+
+.aqi-scale-dropdown {
+    max-width: 300px;
+    margin: 1rem auto;
+    font-family: "Montserrat", sans-serif;
+    background-color: rgba(24, 28, 20, 0.9);
+    border-radius: 10px;
+    color: #fff;
+    overflow: hidden;
+  }
+  
+  /* Header is always visible and clickable */
+  .aqi-scale-header {
+    cursor: pointer;
+    padding: 1rem;
+    background-color: #205781;
+    text-align: center;
+  }
+
+.aqi-scale-header h4 {
+    margin-bottom: 0px;
+}
+
+.aqi-scale-header p {
+    margin-top: 0px;
+}
+  
+  /* Details initially hidden */
+  .aqi-scale-details {
+    max-height: 0;
+    opacity: 0;
+  }
+  
+  /* When open, details expand */
+  .aqi-scale-dropdown.open .aqi-scale-details {
+    /* Set a max-height large enough to show all items */
+    max-height: 500px;
+    opacity: 1;
+    padding: 0px 1rem 1rem 1rem; 
+    background-color: #205781;
+  }
+  
+  /* Individual AQI items styling */
+  .aqi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .aqi-item:last-child {
+    border-bottom: none;
+  }
+  
+  .aqi-text {
+    flex: 1;
+  }
+  
+  .air-quality-box-guide {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-left: 10px;
+    flex-shrink: 0;
+  }
