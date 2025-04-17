@@ -3,13 +3,51 @@ import * as THREE from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
 
-camera.position.z = 10;
-camera.position.y = 10;
-camera.lookAt(0, 0, 0);
+const controls = new OrbitControls(camera, renderer.domElement);
+
+camera.position.x = 3;
+camera.position.y = 6;
+camera.position.z = -1.3
+camera.lookAt(0, 0, -1.3);
+controls.target.set(0, 0, -1.3)
+
+controls.update();
+
+const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
+const d = 20;
+dir_light.target.position.set(0, 0, 0);
+dir_light.position.set(-2, 10, 10);
+scene.add(dir_light);
+scene.add(dir_light.target);
+let loader = new GLTFLoader()
+
+let cityModel
+
+loader.load(
+	'./models/city.glb', // Path to the .gltf file
+	(gltf) => {
+		cityModel = gltf.scene;
+        cityModel.traverse(child => {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              // if using a non‑standard material, ensure it supports shadows
+            }
+          });
+		scene.add(cityModel);
+	},
+	(xhr) => {
+		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+	},
+	(error) => {
+		console.error('An error occurred while loading the model:', error);
+	}
+);
 
 let shuffledQuestions, currentQuestionIndex;
 
@@ -19,7 +57,7 @@ const label_renderer = new CSS2DRenderer();
 label_renderer.setSize(window.innerWidth, window.innerHeight);
 label_renderer.domElement.style.position = "absolute";
 label_renderer.domElement.style.top = "0px";
-//label_renderer.domElement.style.pointerEvents = "none";
+label_renderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(label_renderer.domElement);
 
 const startButton = document.createElement("button");
@@ -73,10 +111,6 @@ nextButtonContainer.appendChild(nextButtonEl);
 const nextButton2D = new CSS2DObject(nextButtonContainer);
 scene.add(nextButton2D);
 nextButton2D.position.set(0, 3, 0);  // Adjust as desired
-
-
-const floor = new THREE.Mesh(new THREE.BoxGeometry(20, 0.5, 10), new THREE.MeshStandardMaterial({ color: 0xff0000 }));
-scene.add(floor);
 
 startButton2D.position.set(10, 0, -5);
 
@@ -194,8 +228,6 @@ function animate() {
 
     // Renders The Labels Each Frame
     label_renderer.render(scene, camera);
-
-    floor.rotation.y += 0.2;
 }
 
 animate();
