@@ -24,29 +24,49 @@ dir_light.target.position.set(0, 0, 0);
 dir_light.position.set(-2, 10, 10);
 scene.add(dir_light);
 scene.add(dir_light.target);
-let loader = new GLTFLoader()
 
-let cityModel
+const loader = new GLTFLoader()
+
+const clock = new THREE.Clock();
+const mixers = [];    // THREE.AnimationMixer[]
+const actions = [];   // THREE.AnimationAction[]
 
 loader.load(
-	'./models/city.glb', // Path to the .gltf file
-	(gltf) => {
-		cityModel = gltf.scene;
-        cityModel.traverse(child => {
-            if (child.isMesh) {
-              child.castShadow = true;
-              child.receiveShadow = true;
-              // if using a non‑standard material, ensure it supports shadows
-            }
-          });
-		scene.add(cityModel);
-	},
-	(xhr) => {
-		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-	},
-	(error) => {
-		console.error('An error occurred while loading the model:', error);
-	}
+    './models/city.glb', // Path to the .gltf file
+    (gltf) => {
+        const cityModel = gltf.scene;
+        scene.add(cityModel);
+    },
+    (xhr) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+    },
+    (error) => {
+        console.error('An error occurred while loading the model:', error);
+    }
+);
+
+loader.load(
+    './models/car.glb', // Path to the .gltf file
+    (gltf) => {
+        const carModel = gltf.scene;
+        scene.add(carModel);
+        if (gltf.animations && gltf.animations.length) {
+            const mixer = new THREE.AnimationMixer(carModel);
+            mixers.push(mixer);
+            gltf.animations.forEach(clip => {
+                const action = mixer.clipAction(clip);
+                action.setLoop(THREE.LoopOnce, 0);
+                action.clampWhenFinished = true;
+                actions.push(action);
+            });
+        }
+    },
+    (xhr) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+    },
+    (error) => {
+        console.error('An error occurred while loading the model:', error);
+    }
 );
 
 let shuffledQuestions, currentQuestionIndex;
@@ -57,7 +77,7 @@ const label_renderer = new CSS2DRenderer();
 label_renderer.setSize(window.innerWidth, window.innerHeight);
 label_renderer.domElement.style.position = "absolute";
 label_renderer.domElement.style.top = "0px";
-label_renderer.domElement.style.pointerEvents = "none";
+//label_renderer.domElement.style.pointerEvents = "none";
 document.body.appendChild(label_renderer.domElement);
 
 const startButton = document.createElement("button");
@@ -112,7 +132,7 @@ const nextButton2D = new CSS2DObject(nextButtonContainer);
 scene.add(nextButton2D);
 nextButton2D.position.set(0, 3, 0);  // Adjust as desired
 
-startButton2D.position.set(10, 0, -5);
+startButton2D.position.set(0, 0, 5);
 
 answerOne2D.position.set(8, 0, 0);
 answerTwo2D.position.set(-8, 0, -2);
@@ -129,7 +149,7 @@ answerFour.addEventListener("click", selectAnswer);
 nextButtonEl.addEventListener('click', () => {
     currentQuestionIndex++;
     setNextQuestion();
-  });
+});
 
 function startGame() {
     console.log("started");
@@ -138,6 +158,11 @@ function startGame() {
     answerTwo.classList.remove("hidden");
     answerThree.classList.remove("hidden");
     answerFour.classList.remove("hidden");
+
+    actions.forEach(action => {
+        action.reset();
+        action.play();
+    });
 
     shuffledQuestions = questions.sort(() => Math.random() - 0.5);
     currentQuestionIndex = 0;
@@ -163,7 +188,7 @@ function showQuestion(question) {
     questionElement.innerText = question.question;
 
     const answerButtons = [answerOne, answerTwo, answerThree, answerFour];
-    answerButtons.forEach((button, index) =>  {
+    answerButtons.forEach((button, index) => {
         const answerOption = question.answers[index];
 
         button.classList.remove("correct", "wrong");
@@ -223,6 +248,10 @@ const questions = [
 function animate() {
 
     requestAnimationFrame(animate);
+
+    // advance all mixers
+    const delta = clock.getDelta();
+    mixers.forEach(mixer => mixer.update(delta));
 
     renderer.render(scene, camera);
 
