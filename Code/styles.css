@@ -78,6 +78,9 @@ body {
 
 .question-container {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
     font-size: 30px;
@@ -135,13 +138,12 @@ body {
 }
 
 #explanation-box {
-    background: rgba(255, 255, 255, 0.9);
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 10px;
     margin-top: 12px;
-    font-size: 14px;
-    max-width: 360px;
+    font-size: 1.2rem;
+    max-width: 600px;
     line-height: 1.4;
 }
 
@@ -447,16 +449,16 @@ button.next {
     flex-shrink: 0;
 }
 
-.close-overlay {
+.close-overlay, .strt-btn {
     display: inline-block;
-    padding: 1rem 2rem;
+    padding: 1rem 1rem;
     /* More padding for a bulkier look */
     font-size: 1.2rem;
     /* Increase font size for readability */
     font-family: 'Montserrat', sans-serif;
     color: #fff;
     background-color: #123458;
-    border: none;
+    border: solid 2px #205781;
     border-radius: 8px;
     /* Rounded corners for a softer look */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -466,6 +468,13 @@ button.next {
 }
 
 .close-overlay:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    /* A slight lift effect on hover */
+}
+
+.strt-btn:hover {
     background-color: #205781;
     /* Darker color on hover */
     transform: translateY(-2px);

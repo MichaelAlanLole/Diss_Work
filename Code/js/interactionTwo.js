@@ -8,12 +8,43 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
 
-camera.position.set(3, 2.8, -1.3);
-camera.lookAt(-0.5, 0, -1.3);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+camera.position.set(4, 4, -1.3);
+camera.lookAt(-1.3, 0, -1.3);
+
+const listener = new THREE.AudioListener();
+camera.add(listener);
+const backgroundMusic = new THREE.Audio(listener);
+
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load(
+  './sounds/CarNoises.mp3',     // path to your file
+  buffer => {
+    backgroundMusic.setBuffer(buffer);
+    backgroundMusic.setLoop(true);      // ← make it loop
+    backgroundMusic.setVolume(1.0);    // tweak volume 0.0–1.0
+    backgroundMusic.play();
+  }
+);
+
 
 const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
 dir_light.target.position.set(0, 0, 0);
-dir_light.position.set(-2, 10, 10);
+dir_light.position.set(-4, 15, -10);
+dir_light.castShadow = true;
+dir_light.shadow.mapSize.set(4096, 4096);                // ↑ crispness
+dir_light.shadow.radius      = 4;                        // PCFSoft blur radius
+dir_light.shadow.bias        = -0.0005;  
+// adjust the orthographic camera frustum for the shadow
+const d = 8;
+dir_light.shadow.camera.left = -d;
+dir_light.shadow.camera.right = d;
+dir_light.shadow.camera.top = d;
+dir_light.shadow.camera.bottom = -d;
+dir_light.shadow.camera.near = 1;
+dir_light.shadow.camera.far = 30;
 scene.add(dir_light);
 scene.add(dir_light.target);
 
@@ -28,6 +59,12 @@ loader.load(
     './models/city.glb', // Path to the .gltf file
     (gltf) => {
         const cityModel = gltf.scene;
+        cityModel.traverse(child => {
+            if (child.isMesh) {
+              child.receiveShadow = true;
+              child.castShadow = true;
+            }
+          });
         scene.add(cityModel);
     },
     (xhr) => {
@@ -64,6 +101,12 @@ carFiles.forEach((file, idx) => {
         file,
         gltf => {
             const car = gltf.scene;
+            car.traverse(child => {
+                if (child.isMesh) {
+                    child.castShadow = true;    // this mesh casts shadows
+                    child.receiveShadow = true; // this mesh also shows shadows from others
+                }
+            });
             car.position.copy(carPositions[idx]);
             car.rotation.copy(carRotations[idx]);
             scene.add(car);
