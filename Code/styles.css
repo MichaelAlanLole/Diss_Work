@@ -39,6 +39,23 @@ body {
     z-index: -1;
 }
 
+.answr-btn {
+    position: relative;
+    /* anchor arrow */
+    overflow: visible;
+    /* let arrow stick out */
+    background: #123458;
+    border: 2px solid #1d4ed8;
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-family: "Montserrat", sans-serif;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+    cursor: pointer;
+}
+
+
+
 .hide {
     opacity: 0;
     transform: translateY(-10px);
@@ -59,24 +76,91 @@ body {
     pointer-events: auto;
 }
 
-.questions {
+.question-container {
     position: absolute;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+    text-align: center;
+    color: #ffffff;
+    top: 1px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 800px;
     max-width: 80%;
-    height: 200px;
-    background-color: aqua;
-    border-radius: 5px;
+    background-color: #123458;
+    border: 2px solid #205781;
+    border-radius: 20px;
     padding: 10px;
     margin-top: 2%;
-    left: 28%;
-    box-shadow: 0 0 10px 2px;
+}
+
+.question-container p {
+    font-size: 1rem
+}
+
+.question {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .strt-btn,
 .answr,
 .next {
     width: 100px;
-    height: 50px;
+}
+
+.result-label {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #fff;
+    text-align: center;
+    pointer-events: none;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.result-label.hidden {
+    display: none;
+}
+
+.result-label.correct {
+    background: rgba(0, 128, 0, 0.8);
+}
+
+.result-label.wrong {
+    background: rgba(128, 0, 0, 0.8);
+}
+
+#explanation-box {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 14px;
+    max-width: 360px;
+    line-height: 1.4;
+}
+
+#explanation-box.hidden {
+    display: none;
+}
+
+button.next {
+    position: fixed;
+    /* stay on screen even if page scrolls */
+    bottom: 40px;
+    /* tweak to taste */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 1000;
+    /* above the canvas */
 }
 
 .hidden {
@@ -398,7 +482,8 @@ body {
 
 .continents::-webkit-scrollbar-track {
     background: #205781;
-    border-top-left-radius: 0px !important;    /* Force top corners to be squared */
+    border-top-left-radius: 0px !important;
+    /* Force top corners to be squared */
     border-top-right-radius: 0px !important;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -411,7 +496,8 @@ body {
 }
 
 .continents::-webkit-scrollbar-thumb:hover {
-    background-color: #555;  /* Change hover color if desired */
+    background-color: #555;
+    /* Change hover color if desired */
 }
 
 .continents {
