@@ -93,7 +93,7 @@ loader.load(
 		const marker3 = createContinentMarkers("continentMarker3", -27, 5, 10);
 		const marker4 = createContinentMarkers("continentMarker4", 3, 21, -22);
 		const marker5 = createContinentMarkers("continentMarker5", -14, -5, -26);
-		const marker6 = createContinentMarkers("continentMarker6", 17, -12, 21);
+		const marker6 = createContinentMarkers("continentMarker6", 19, -14, 23);
 
 		// Add markers to the group (making sure each marker exists)
 		if (marker1) markerGroup.add(marker1);

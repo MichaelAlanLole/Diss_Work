@@ -151,20 +151,6 @@ body {
     display: none;
 }
 
-button.next {
-    position: fixed;
-    /* stay on screen even if page scrolls */
-    bottom: 40px;
-    /* tweak to taste */
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    cursor: pointer;
-    z-index: 1000;
-    /* above the canvas */
-}
-
 .hidden {
     display: none;
 }
@@ -449,7 +435,8 @@ button.next {
     flex-shrink: 0;
 }
 
-.close-overlay, .strt-btn {
+.close-overlay,
+.strt-btn {
     display: inline-block;
     padding: 1rem 1rem;
     /* More padding for a bulkier look */
@@ -467,6 +454,60 @@ button.next {
     transition: background-color 0.3s, transform 0.2s;
 }
 
+
+button.next {
+    
+    display: inline-block;
+    padding: 1rem 1rem;
+    margin: 5px;
+    width: 200px;
+    /* More padding for a bulkier look */
+    font-size: 1.2rem;
+    /* Increase font size for readability */
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+    background-color: #123458;
+    border: solid 2px #205781;
+    border-radius: 8px;
+    /* Rounded corners for a softer look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.next-container {
+    display: none;
+    /* hidden by default */
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 1.2rem;
+    max-width: 600px;
+}
+
+.nav-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12rem;
+    color: white;
+    padding: 4rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .nav-arrow:hover {
+    color: rgba(0,0,0,0.7);
+  }
+  
+  .nav-left  { left:  3rem; }
+  .nav-right { right: 3rem; }
+
+.next-container.show {
+    display: flex;
+}
+
 .close-overlay:hover {
     background-color: #205781;
     /* Darker color on hover */
@@ -479,6 +520,14 @@ button.next {
     /* Darker color on hover */
     transform: translateY(-2px);
     /* A slight lift effect on hover */
+}
+
+.next:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    background-color: #205781;
+    cursor: pointer;
 }
 
 .continents::-webkit-scrollbar {

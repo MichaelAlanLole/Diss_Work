@@ -4,6 +4,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { contain } from 'three/src/extras/TextureUtils.js';
 
 // Import Scene Creation
 const { scene, camera, renderer } = createScene();
@@ -11,7 +12,7 @@ const { scene, camera, renderer } = createScene();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-camera.position.set(4, 4, -1.3);
+camera.position.set(4, 3.5, -1.3);
 camera.lookAt(-1.3, 0, -1.3);
 
 const listener = new THREE.AudioListener();
@@ -20,23 +21,40 @@ const backgroundMusic = new THREE.Audio(listener);
 
 const audioLoader = new THREE.AudioLoader();
 audioLoader.load(
-  './sounds/CarNoises.mp3',     // path to your file
-  buffer => {
-    backgroundMusic.setBuffer(buffer);
-    backgroundMusic.setLoop(true);      // ← make it loop
-    backgroundMusic.setVolume(1.0);    // tweak volume 0.0–1.0
-    backgroundMusic.play();
-  }
+    './sounds/CarNoises.mp3',     // path to your file
+    buffer => {
+        backgroundMusic.setBuffer(buffer);
+        backgroundMusic.setLoop(true);      // ← make it loop
+        backgroundMusic.setVolume(0.6);    // tweak volume 0.0–1.0
+    }
 );
 
+let correctBuffer = null;
+
+// load once at startup
+audioLoader.load(
+    './sounds/CarDriving.mp3',
+    buffer => {
+        correctBuffer = buffer;
+    }
+);
+
+function playCorrectSound() {
+    if (!correctBuffer) return;               // not loaded yet
+    const oneShot = new THREE.Audio(listener);
+    oneShot.setBuffer(correctBuffer);
+    oneShot.setLoop(false);
+    oneShot.setVolume(3);
+    oneShot.play();
+}
 
 const dir_light = new THREE.DirectionalLight(0xFFFFFF, 1);
 dir_light.target.position.set(0, 0, 0);
 dir_light.position.set(-4, 15, -10);
 dir_light.castShadow = true;
 dir_light.shadow.mapSize.set(4096, 4096);                // ↑ crispness
-dir_light.shadow.radius      = 4;                        // PCFSoft blur radius
-dir_light.shadow.bias        = -0.0005;  
+dir_light.shadow.radius = 4;                        // PCFSoft blur radius
+dir_light.shadow.bias = -0.0005;
 // adjust the orthographic camera frustum for the shadow
 const d = 8;
 dir_light.shadow.camera.left = -d;
@@ -61,10 +79,10 @@ loader.load(
         const cityModel = gltf.scene;
         cityModel.traverse(child => {
             if (child.isMesh) {
-              child.receiveShadow = true;
-              child.castShadow = true;
+                child.receiveShadow = true;
+                child.castShadow = true;
             }
-          });
+        });
         scene.add(cityModel);
     },
     (xhr) => {
@@ -184,15 +202,31 @@ answrFourContainer.appendChild(answerFour);
 const answerFour2D = new CSS2DObject(answrFourContainer);
 scene.add(answerFour2D);
 
-const nextButtonEl = document.createElement('button');
-nextButtonEl.classList.add('next', 'hidden');  // start hidden
-nextButtonEl.textContent = 'Next';
-document.body.appendChild(nextButtonEl);
-
 const explanationBox = document.createElement('div');
 explanationBox.id = 'explanation-box';
 explanationBox.classList.add('hidden');
 questionElement.parentElement.appendChild(explanationBox);
+
+const nextButtonEl = document.createElement('button');
+const nextContainer = document.createElement('div');
+nextContainer.appendChild(nextButtonEl);
+nextContainer.classList.add('next-container');
+nextButtonEl.classList.add('next');  // start hidden
+nextButtonEl.textContent = 'Next';
+questionElement.parentElement.appendChild(nextContainer);
+
+const restartButton = document.createElement('button');
+restartButton.id = 'restart-button';
+restartButton.classList.add('next', 'hidden');  // reuse .next styling
+restartButton.textContent = 'Restart';
+
+// append it in the same wrapper as Next
+nextContainer.appendChild(restartButton);
+
+// wire up its click to restart the quiz
+restartButton.addEventListener('click', () => {
+    restartQuiz();
+});
 
 answerOne2D.position.set(-1.6, 1, -3);
 answerTwo2D.position.set(-0.5, 1, 0.4);
@@ -212,7 +246,12 @@ nextButtonEl.addEventListener('click', () => {
 });
 
 function startGame() {
-    console.log("started");
+    listener.context.resume().then(() => {
+        if (!backgroundMusic.isPlaying) {
+            backgroundMusic.play();
+        }
+    });
+
     startButton.classList.add("hidden");
     answerOne.classList.remove("hidden");
     answerTwo.classList.remove("hidden");
@@ -252,15 +291,9 @@ function playAllClips(index) {
 }
 
 function playCar(index) {
-    carActions.forEach((seq, i) => {
-        if (!seq) return;
-        if (i === index) {
-            playAllClips(i);            // play all its clips
-        } else {
-            seq.forEach(a => a.stop());     // freeze others
-            mixers[i]?.setTime(0);
-        }
-    });
+
+    playAllClips(index);            // play all its clips
+
 }
 
 function setNextQuestion() {
@@ -276,14 +309,46 @@ function setNextQuestion() {
     if (currentQuestionIndex >= shuffledQuestions.length) {
         console.log("Quiz finished!");
         questionElement.innerText = "All questions completed!";
+        nextContainer.classList.remove('show')
         nextButtonEl.classList.add('hidden');
+        restartButton.classList.remove('hidden');
+        nextContainer.classList.add('show');
         // You could hide the answer buttons or show a “Restart” button here
         return;
     }
 
     showQuestion(shuffledQuestions[currentQuestionIndex])
 
+    nextContainer.classList.remove('show');
+}
+
+function restartQuiz() {
+    // 1) Hide explanation
+    explanationBox.classList.add('hidden');
+    explanationBox.textContent = '';
+
+    // 2) Hide the next/restart container
+    nextContainer.classList.remove('show');
+    restartButton.classList.add('hidden');
     nextButtonEl.classList.add('hidden');
+
+    // 3) Shuffle & reset index
+    shuffledQuestions = questions.sort(() => Math.random() - 0.5);
+    currentQuestionIndex = 0;
+
+    // 4) Reset pointer-events on the CSS2DRenderer so clicks hit your buttons
+    label_renderer.domElement.style.pointerEvents = 'none';
+
+    // 5) Reset all answer buttons
+    const answerButtons = [answerOne, answerTwo, answerThree, answerFour];
+    answerButtons.forEach(btn => {
+        btn.classList.remove('correct', 'wrong');
+        btn.disabled = false;
+        btn.classList.remove('hidden');
+    });
+
+    // 6) Render the first question
+    showQuestion(shuffledQuestions[0]);
 }
 
 function showQuestion(question) {
@@ -318,6 +383,8 @@ function selectAnswer(e) {
         selectedButton.classList.add("correct");
         const q = shuffledQuestions[currentQuestionIndex];
 
+        playCorrectSound();
+
         explanationBox.innerHTML = `
       <strong>Answer:</strong>
       ${q.answers.find(a => a.correct).text}<br>
@@ -325,7 +392,7 @@ function selectAnswer(e) {
     `;
         explanationBox.classList.remove('hidden');
 
-        nextButtonEl.classList.remove('hidden');
+        nextContainer.classList.add('show');
 
         [answerOne, answerTwo, answerThree, answerFour].forEach(btn => btn.disabled = true);
 
@@ -337,7 +404,7 @@ function selectAnswer(e) {
 
 const questions = [
     {
-        question: 'In the UK in 2022, transport was responsible for what percentage of all Nitrogen Oxide(NOx) pollution?',
+        question: 'What percentage of the UK\'s total nitrogen oxide (NOx) emissions in 2022 was attributed to the transport sector?',
         answers: [
             { text: "22%", correct: false },
             { text: "36%", correct: false },
@@ -347,7 +414,7 @@ const questions = [
         explanation: 'Absolutely right! That number is surprisingly high, but would you believe it has actually dropped by 78% since 1990? This impressive decline is thanks to significant advancements in motor vehicle development.'
     },
     {
-        question: 'In the UK in 2022, transport was responsible for what percentage of all PM2.5 pollution (Particulate Matter)?',
+        question: 'In 2022, what percentage of the UK\'s total PM2.5 (particulate matter) pollution was attributed to the transport sector?',
         answers: [
             { text: "12%", correct: false },
             { text: "19%", correct: false },
@@ -357,7 +424,7 @@ const questions = [
         explanation: 'Exactly! It’s incredible, despite how harmful Particulate Matter is to breathe in, its levels have dropped by 72% since 1990. Thank goodness for that progress!'
     },
     {
-        question: 'Which transport related pollutant is the most damaging to our health?',
+        question: 'Which transport-related pollutant poses the greatest risk to human health?',
         answers: [
             { text: "PM2.5", correct: true },
             { text: "PM10", correct: false },
@@ -367,7 +434,7 @@ const questions = [
         explanation: 'Correct! PM2.5 is considered the most hazardous because of the variety of harmful chemicals it can carry and its incredibly small size, which allows it to penetrate deep into the tiny crevices of our lungs.'
     },
     {
-        question: 'Which Country has the most vehicles per person, with 1606 per person?',
+        question: 'Which country has the highest number of vehicles per person, with 1,606 vehicles per 1,000 people?',
         answers: [
             { text: "China", correct: false },
             { text: "United States", correct: false },
@@ -377,7 +444,7 @@ const questions = [
         explanation: 'Spot on! Because of San Marino’s small size, it actually has more cars than people! Interestingly, New Zealand ranks 9th and the United States comes in at 11th.'
     },
     {
-        question: 'Which of these are symptoms of Nitrogen Oxide (NOx) Pollutants?',
+        question: 'Which of the following are symptoms or health effects caused by nitrogen oxide (NOx) pollution?',
         answers: [
             { text: "Lung Disease", correct: true },
             { text: "Damage Crops", correct: true },
@@ -387,7 +454,7 @@ const questions = [
         explanation: 'Correct! Actually all of these are symptoms of Nitrogen Oxide (NOx).'
     },
     {
-        question: 'Which of these are symptoms of PM2.5 & PM10 (Particulate Matter) Pollutants?',
+        question: 'Which of the following are symptoms or health effects associated with PM2.5 and PM10 (particulate matter) pollution?',
         answers: [
             { text: "Worsening Medical Conditions", correct: true },
             { text: "Lung Cancer", correct: true },
@@ -407,7 +474,7 @@ const questions = [
         explanation: 'Well done! Interestingly, even though they contain the same chemicals. The size difference between the two makes PM2.5 much more deadly!'
     },
     {
-        question: 'What is the largest contributor of greenhouse gasses in the UK in 2021?',
+        question: 'What was the largest contributor to greenhouse gas emissions in the UK in 2021?',
         answers: [
             { text: "Factories", correct: false },
             { text: "Transport", correct: true },
@@ -417,7 +484,7 @@ const questions = [
         explanation: 'Great job! While this isn’t a historic high, it was still 10% higher than the previous year, 2020.'
     },
     {
-        question: 'Transport emissions make up for what percentage of total UK greenhouse gas emissions in 2021?',
+        question: 'What percentage of the UK’s total greenhouse gas emissions in 2021 came from the transport sector?',
         answers: [
             { text: "31%", correct: false },
             { text: "17%", correct: false },
@@ -427,7 +494,7 @@ const questions = [
         explanation: 'Correct! A quarter of our greenhouse gas emissions each year come from transportation alone!'
     },
     {
-        question: 'Which country has the worst air quality?',
+        question: 'Which country had the worst air quality in the world according to the 2023 World Air Quality Report?',
         answers: [
             { text: "China", correct: false },
             { text: "Bangladesh", correct: true },
@@ -437,7 +504,7 @@ const questions = [
         explanation: 'Spot on! Areas that are poorer and more densely populated often experience significantly worse air quality.'
     },
     {
-        question: 'Which country has released the most greenhouse gasses into the atmosphere to date?',
+        question: 'Which country has released the most greenhouse gases into the atmosphere to date?',
         answers: [
             { text: "India", correct: false },
             { text: "UK", correct: false },
