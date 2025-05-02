@@ -1,0 +1,568 @@
+body {
+    margin: 0;
+}
+
+.backButton {
+    position: absolute;
+}
+
+.button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: auto;
+    padding: 0.5rem 1rem;
+}
+
+.tooltip {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    background-color: #123458;
+    color: white;
+    padding: 10px;
+    position: relative;
+    transform: translateY(-10px);
+    opacity: 0;
+    transition-duration: 0.2s;
+    transition-property: opacity, transform;
+}
+
+.tooltip::after {
+    position: absolute;
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-color: #123458;
+    top: 90%;
+    left: 50%;
+    transform: rotateZ(45deg) translateX(-50%);
+    z-index: -1;
+}
+
+.answr-btn {
+    position: relative;
+    /* anchor arrow */
+    overflow: visible;
+    /* let arrow stick out */
+    background: #123458;
+    border: 2px solid #1d4ed8;
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-family: "Montserrat", sans-serif;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+    cursor: pointer;
+}
+
+
+
+.hide {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.button.hide {
+    display: none;
+    pointer-events: none;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.button.show {
+    display: block;
+    pointer-events: auto;
+}
+
+.question-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+    text-align: center;
+    color: #ffffff;
+    top: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    max-width: 80%;
+    background-color: #123458;
+    border: 2px solid #205781;
+    border-radius: 20px;
+    padding: 10px;
+    margin-top: 2%;
+}
+
+.question-container p {
+    font-size: 1rem
+}
+
+.question {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.strt-btn,
+.answr,
+.next {
+    width: 100px;
+}
+
+.result-label {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #fff;
+    text-align: center;
+    pointer-events: none;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.result-label.hidden {
+    display: none;
+}
+
+.result-label.correct {
+    background: rgba(0, 128, 0, 0.8);
+}
+
+.result-label.wrong {
+    background: rgba(128, 0, 0, 0.8);
+}
+
+#explanation-box {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 1.2rem;
+    max-width: 600px;
+    line-height: 1.4;
+}
+
+#explanation-box.hidden {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.correct {
+    background-color: green;
+}
+
+.wrong {
+    background-color: red;
+}
+
+.button {
+    position: absolute;
+    width: 200px;
+}
+
+.files {
+    border: 2px solid #666;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.locations {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 8px 0;
+    border-radius: 4px;
+}
+
+.locations h3 {
+    margin: 0 0 4px;
+}
+
+.continents {
+    /* Use a grid layout */
+    display: none;
+    position: absolute;
+    top: 50px;
+    /* adjust as needed */
+    left: 60px;
+    /* adjust as needed */
+
+    /* Control width and height so you get your own scrollbar */
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+
+    /* Ensure this element is on top of the canvas */
+    z-index: 9999;
+
+    /* Basic styling so it’s clear */
+    background-color: rgba(24, 28, 20, 0.8);
+    border: 2px solid #205781;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    display: none;
+
+    /* toggled by JavaScript (“block” when sphere is clicked) */
+}
+
+/* Make each child div block-level and stack with spacing: */
+.continents>div {
+    margin-bottom: 10px;
+}
+
+.locationDiv {
+    background-color: #123458;
+    border-radius: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* The clickable city/country header */
+.dropdown-header {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    cursor: pointer;
+    /* so the user knows they can click it */
+    padding: 20px;
+    color: #fff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.locationDiv:hover {
+    background-color: #205781;
+
+    transform: translateY(-2px);
+}
+
+/* The color box at the right or next to the text */
+.air-quality-box {
+    width: 16px;
+    height: 19px;
+    margin-left: 8px;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+/* The container for the extra data. Hidden by default. */
+.dropdown-details {
+    display: none;
+    /* hidden by default */
+    padding: 0px 20px 20px 20px;
+    border-radius: 0px 0px 10px 10px;
+    /* indent so it looks nested under the header */
+}
+
+.dropdown-details h3 {
+    font-size: 1rem;
+}
+
+#pop-up {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 800px;
+    max-height: 60vh;
+
+    padding: 20px;
+
+    background-color: #123458;
+    border: 2px solid #205781;
+    color: white;
+    border-radius: 20px;
+
+    font-family: "Montserrat", sans-serif;
+    text-align: center;
+}
+
+#pop-up h2 {
+    margin-top: 0px;
+}
+
+.overlay-controls {
+    padding-top: 10px;
+}
+
+.titleSpan {
+    width: 200px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.dropdown-details.show {
+    display: block;
+    font-family: "Montserrat", sans-serif;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.red {
+    background-color: red;
+}
+
+.purple {
+    background-color: purple;
+}
+
+.maroon {
+    background-color: maroon;
+}
+
+.qualityDiv,
+.dropdown-eaqi {
+    font-size: 1rem;
+}
+
+.qualityDiv {
+    display: flex;
+}
+
+.paramDiv {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid #205781;
+}
+
+.paramDiv h3,
+.paramDiv p {
+    margin: 0;
+    /* Remove default margins to fine tune the layout */
+    padding: 0;
+}
+
+.lilDiv {
+    display: flex;
+    justify-content: space-between;
+}
+
+.aqi-scale-dropdown {
+    max-width: 300px;
+    margin: 1rem auto;
+    font-family: "Montserrat", sans-serif;
+    background-color: rgba(24, 28, 20, 0.9);
+    border-radius: 10px;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* Header is always visible and clickable */
+.aqi-scale-header {
+    cursor: pointer;
+    padding: 1rem;
+    background-color: #123458;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.aqi-scale-dropdown:not(.open) .aqi-scale-header:hover {
+    background-color: #205781;
+    transform: translateY(-2px);
+}
+
+.aqi-scale-header h4 {
+    margin-bottom: 0px;
+}
+
+.aqi-scale-header p {
+    margin-top: 0px;
+}
+
+/* Details initially hidden */
+.aqi-scale-details {
+    max-height: 0;
+    opacity: 0;
+}
+
+.aqi-scale-dropdown.open .aqi-scale-header {
+    background-color: #205781;
+}
+
+/* When open, details expand */
+.aqi-scale-dropdown.open .aqi-scale-details {
+    /* Set a max-height large enough to show all items */
+    max-height: 500px;
+    opacity: 1;
+    padding: 0px 1rem 1rem 1rem;
+    background-color: #205781;
+}
+
+/* Individual AQI items styling */
+.aqi-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.aqi-item:last-child {
+    border-bottom: none;
+}
+
+.aqi-text {
+    flex: 1;
+}
+
+.air-quality-box-guide {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.close-overlay,
+.strt-btn {
+    display: inline-block;
+    padding: 1rem 1rem;
+    /* More padding for a bulkier look */
+    font-size: 1.2rem;
+    /* Increase font size for readability */
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+    background-color: #123458;
+    border: solid 2px #205781;
+    border-radius: 8px;
+    /* Rounded corners for a softer look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+
+button.next {
+    
+    display: inline-block;
+    padding: 1rem 1rem;
+    margin: 5px;
+    width: 200px;
+    /* More padding for a bulkier look */
+    font-size: 1.2rem;
+    /* Increase font size for readability */
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+    background-color: #123458;
+    border: solid 2px #205781;
+    border-radius: 8px;
+    /* Rounded corners for a softer look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.next-container {
+    display: none;
+    /* hidden by default */
+    padding: 10px;
+    margin-top: 12px;
+    font-size: 1.2rem;
+    max-width: 600px;
+}
+
+.nav-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12rem;
+    color: white;
+    padding: 4rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  
+  .nav-arrow:hover {
+    color: rgba(0,0,0,0.7);
+  }
+  
+  .nav-left  { left:  3rem; }
+  .nav-right { right: 3rem; }
+
+.next-container.show {
+    display: flex;
+}
+
+.close-overlay:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    /* A slight lift effect on hover */
+}
+
+.strt-btn:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    /* A slight lift effect on hover */
+}
+
+.next:hover {
+    background-color: #205781;
+    /* Darker color on hover */
+    transform: translateY(-2px);
+    background-color: #205781;
+    cursor: pointer;
+}
+
+.continents::-webkit-scrollbar {
+    width: 12px;
+}
+
+.continents::-webkit-scrollbar-button {
+    display: none;
+}
+
+.continents::-webkit-scrollbar-track {
+    background: #205781;
+    border-top-left-radius: 0px !important;
+    /* Force top corners to be squared */
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.continents::-webkit-scrollbar-thumb {
+    background-color: #205781;
+    border-radius: 10px;
+    border: 3px solid #205781;
+}
+
+.continents::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    /* Change hover color if desired */
+}
+
+.continents {
+    scrollbar-color: #205781 #123458;
+    overflow-y: auto;
+    /* If you have a border radius on .continents, the scrollbar might follow it.  
+       You might consider wrapping your scrollable content inside another element 
+       that does not have border radius. */
+
+}
