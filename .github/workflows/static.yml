@@ -15,12 +15,13 @@ concurrency:
 
 jobs:
   deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     env:
       VITE_CACHE_DIR: ${{ github.workspace }}/.vite
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,8 +32,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Make Vite CLI executable
+        run: chmod +x ./node_modules/.bin/vite
+
       - name: Build app
         run: npm run build
+        # alternatively: run: npm exec -- vite build
 
       - uses: actions/configure-pages@v5
 
