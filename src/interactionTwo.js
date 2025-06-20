@@ -21,7 +21,7 @@ const backgroundMusic = new THREE.Audio(listener);
 
 const audioLoader = new THREE.AudioLoader();
 audioLoader.load(
-    'Assets/sounds/CarNoises.mp3',     // path to file
+    'Assets/Sounds/CarNoises.mp3',     // path to file
     buffer => {
         backgroundMusic.setBuffer(buffer);
         backgroundMusic.setLoop(true);      //  make it loop
@@ -33,7 +33,7 @@ let correctBuffer = null;
 
 // load once at startup
 audioLoader.load(
-    'Assets/sounds/CarDriving.mp3',
+    'Assets/Sounds/CarDriving.mp3',
     buffer => {
         correctBuffer = buffer;
     }
