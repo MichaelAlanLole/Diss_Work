@@ -21,7 +21,7 @@ const backgroundMusic = new THREE.Audio(listener);
 
 const audioLoader = new THREE.AudioLoader();
 audioLoader.load(
-    './sounds/CarNoises.mp3',     // path to file
+    'Assets/sounds/CarNoises.mp3',     // path to file
     buffer => {
         backgroundMusic.setBuffer(buffer);
         backgroundMusic.setLoop(true);      //  make it loop
@@ -33,7 +33,7 @@ let correctBuffer = null;
 
 // load once at startup
 audioLoader.load(
-    './sounds/CarDriving.mp3',
+    'Assets/sounds/CarDriving.mp3',
     buffer => {
         correctBuffer = buffer;
     }
@@ -74,7 +74,7 @@ const carModels = [];   // THREE.Group  – index = answer button 0‑3
 const carActions = [];
 
 loader.load(
-    './models/city.glb', // Path to the .gltf file
+    'Assets/models/city.glb', // Path to the .gltf file
     (gltf) => {
         const cityModel = gltf.scene;
         cityModel.traverse(child => {
@@ -101,10 +101,10 @@ const carPositions = [           // match your layout / answer order
 ];
 
 const carFiles = [
-    './models/Cars/car.glb',   // answerOne
-    './models/Cars/car2.glb',   // answerTwo
-    './models/Cars/car3.glb',   // answerThree
-    './models/Cars/car4.glb'    // answerFour
+    'Assets/models/Cars/car.glb',   // answerOne
+    'Assets/models/Cars/car2.glb',   // answerTwo
+    'Assets/models/Cars/car3.glb',   // answerThree
+    'Assets/models/Cars/car4.glb'    // answerFour
 ];
 
 const carRotations = [              // Euler angles in radians

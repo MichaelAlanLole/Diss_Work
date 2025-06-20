@@ -20,7 +20,6 @@ const loader = new GLTFLoader();
 // Skybox setup: cube texture loader with six images
 const CtextureLoader = new THREE.CubeTextureLoader();
 const skyboxTexture = CtextureLoader.load([
-    'Assets/skybox/right.png',
 	'Assets/skybox/right.png',
 	'Assets/skybox/left.png',
 	'Assets/skybox/top.png',
