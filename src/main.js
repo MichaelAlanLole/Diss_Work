@@ -20,12 +20,13 @@ const loader = new GLTFLoader();
 // Skybox setup: cube texture loader with six images
 const CtextureLoader = new THREE.CubeTextureLoader();
 const skyboxTexture = CtextureLoader.load([
-	'./skybox/right.png',
-	'./skybox/left.png',
-	'./skybox/top.png',
-	'./skybox/bottom.png',
-	'./skybox/front.png',
-	'./skybox/back.png',
+    'Assets/skybox/right.png',
+	'Assets/skybox/right.png',
+	'Assets/skybox/left.png',
+	'Assets/skybox/top.png',
+	'Assets/skybox/bottom.png',
+	'Assets/skybox/front.png',
+	'Assets/skybox/back.png',
 ]);
 scene.background = skyboxTexture; // Apply skybox to scene background
 
@@ -95,7 +96,7 @@ let continentModel; // Will store loaded pin model
 
 // Load 3D pin model and place markers for each continent
 loader.load(
-	'./models/Pin.glb',
+	'Assets/models/Pin.glb',
 	(gltf) => {
 		continentModel = gltf.scene;
 		// Create markers with names and positions
@@ -266,7 +267,7 @@ let fastCloudLoad = false;
 
 // Load the low-poly Earth model
 loader.load(
-    './models/low_poly_earthv2-3.glb', // path to model file
+    'Assets/models/low_poly_earthv2-3.glb', // path to model file
     (gltf) => {
         earthModel = gltf.scene;         // extract scene graph
         scene.add(earthModel);           // add to Three.js scene
@@ -288,7 +289,7 @@ loader.load(
 
 // Load the slower-moving cloud layer
 loader.load(
-    './models/cloud.glb',
+    'Assets/models/cloud.glb',
     (gltf) => {
         cloud = gltf.scene;
         cloud.castShadow = true;
@@ -308,7 +309,7 @@ loader.load(
 
 // Load the fast-moving cloud layer
 loader.load(
-    './models/fastclouds.glb',
+    'Assets/models/fastclouds.glb',
     (gltf) => {
         fastcloud = gltf.scene;
         fastcloud.castShadow = true;
@@ -332,12 +333,12 @@ ball.add(markerGroup);
 
 // List of XML files for air quality data per continent
 const xmlFiles = [
-    './Data/Europe_air_quality_data.xml',
-    './Data/Asia_air_quality_data.xml',
-    './Data/Africa_air_quality_data.xml',
-    './Data/NorthAmerica_air_quality_data.xml',
-    './Data/SouthAmerica_air_quality_data.xml',
-    './Data/Oceania_air_quality_data.xml'
+    'Assets/Data/Europe_air_quality_data.xml',
+    'Assets/Data/Asia_air_quality_data.xml',
+    'Assets/Data/Africa_air_quality_data.xml',
+    'Assets/Data/NorthAmerica_air_quality_data.xml',
+    'Assets/Data/SouthAmerica_air_quality_data.xml',
+    'Assets/Data/Oceania_air_quality_data.xml'
 ];
 
 // Fetch all XML files in parallel, handle errors gracefully
@@ -378,12 +379,12 @@ Promise.all(fetchPromises)
             let containerId = null;
 
             // Determine which container corresponds to this file based on its name
-            if (fileName === './Data/Europe_air_quality_data.xml') { containerId = Europe_Container; }
-            else if (fileName === './Data/Africa_air_quality_data.xml') { containerId = Africa_Container; }
-            else if (fileName === './Data/Asia_air_quality_data.xml') { containerId = Asia_Container; }
-            else if (fileName === './Data/NorthAmerica_air_quality_data.xml') { containerId = NorthAmerica_Container; }
-            else if (fileName === './Data/SouthAmerica_air_quality_data.xml') { containerId = SouthAmerica_Container; }
-            else if (fileName === './Data/Oceania_air_quality_data.xml') { containerId = Oceania_Container; }
+            if (fileName === 'Assets/Data/Europe_air_quality_data.xml') { containerId = Europe_Container; }
+            else if (fileName === 'Assets/Data/Africa_air_quality_data.xml') { containerId = Africa_Container; }
+            else if (fileName === 'Assets/Data/Asia_air_quality_data.xml') { containerId = Asia_Container; }
+            else if (fileName === 'Assets/Data/NorthAmerica_air_quality_data.xml') { containerId = NorthAmerica_Container; }
+            else if (fileName === 'Assets/Data/SouthAmerica_air_quality_data.xml') { containerId = SouthAmerica_Container; }
+            else if (fileName === 'Assets/Data/Oceania_air_quality_data.xml') { containerId = Oceania_Container; }
             else {
                 // No known container for this file
                 console.warn(`No matching container for file: ${fileName}`);
