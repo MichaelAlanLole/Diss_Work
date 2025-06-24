@@ -21,32 +21,26 @@
 		<p>Welcome to my interactive experience on air pollution, with a focus on vehicle emissions. This includes
 			Nitrogen Dioxide (NO₂), Particulate Matter (PM2.5 and PM10), and Carbon Monoxide (CO), all of which are
 			released into the air we breathe by the vehicles we drive, significantly impacting urban environments.</p>
-		<p>Please navigate around the globe and explore how these pollutants are produced, and how they effect the quality of the air we breathe!
+		<p>Please navigate around the globe and explore how these pollutants are produced, and how they effect the
+			quality of the air we breathe!
 		</p>
 		<p>Please click on any continent to view the air quality of its major cities!</p>
 		<button id="close-pop-up" class="close-overlay">Close</button>
 	</div>
-	<div class="top-container">
-		<div class="pm-dropdown">
-			<div class="pm-header">
-				<h5>PM2.5 & PM10</h5>
-				<p>(Particulate Matter)</p>
-			</div>
+
+	<div class="top-container" id="top-container">
+		<h5>What does my vehicle produce?</h5>
+		<div class="top-buttons">
+			<div class="top-dropdown" data-type="pm">Particulate Matter (PM)</div>
+			<div class="top-dropdown" data-type="co">Carbon Monoxide (CO)</div>
+			<div class="top-dropdown" data-type="no2">Nitrogen Dioxide (NO₂)</div>
 		</div>
-		<div class="co-dropdown">
-			<div class="co-header">
-				<h5>Carbon Monoxide</h5>
-				<p>(CO)</p>
-			</div>
+
+		<div class="dropdown-full-content" id="dropdownContentBox">
+			<p id="dropdownContentText"></p>
 		</div>
-		<div class="no-dropdown">
-			<div class="no-header">
-				<h5>Nitrogen Dioxide</h5>
-				<p>(NO₂)</p>
-			</div>
-		</div>
-		
 	</div>
+
 	<div class="continent-container">
 		<div id="Europe-container" class="continents">
 			<div class="overlay-controls">
@@ -271,7 +265,7 @@
 			</div>
 		</div>
 	</div>
-	<a href="interactionTwo.html"     class="nav-arrow nav-right" aria-label="Go to next page">›</a>
+	<a href="interactionTwo.html" class="nav-arrow nav-right" aria-label="Go to next page">›</a>
 </body>
 
 </html>

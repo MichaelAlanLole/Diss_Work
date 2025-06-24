@@ -8,8 +8,7 @@ import { createScene } from './sceneCreation';
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/Addons.js';
 // Loader for GLTF 3D models
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-// Utility (unused here) imported - do not comment out
-import { round } from 'three/tsl';
+
 
 // Initialize scene, camera, and WebGL renderer from helper
 const { scene, camera, renderer } = createScene();
@@ -20,12 +19,12 @@ const loader = new GLTFLoader();
 // Skybox setup: cube texture loader with six images
 const CtextureLoader = new THREE.CubeTextureLoader();
 const skyboxTexture = CtextureLoader.load([
-	'Assets/skybox/right.png',
-	'Assets/skybox/left.png',
-	'Assets/skybox/top.png',
-	'Assets/skybox/bottom.png',
-	'Assets/skybox/front.png',
-	'Assets/skybox/back.png',
+    'Assets/skybox/right.png',
+    'Assets/skybox/left.png',
+    'Assets/skybox/top.png',
+    'Assets/skybox/bottom.png',
+    'Assets/skybox/front.png',
+    'Assets/skybox/back.png',
 ]);
 scene.background = skyboxTexture; // Apply skybox to scene background
 
@@ -66,26 +65,52 @@ controls.enableDamping = true; // Smooth motion
 controls.enablePan = false;
 controls.enableZoom = false;
 
+const dropdowns = document.querySelectorAll('.top-dropdown');
+const contentBox = document.getElementById('dropdownContentBox');
+const contentText = document.getElementById('dropdownContentText');
+
+const contentMap = {
+  pm: "Particulate Matter (PM) includes microscopic particles from vehicles, tires, and road dust. It can harm lungs and heart health over time.",
+  co: "Carbon Monoxide (CO) is a poisonous gas produced by engines. In high doses, it reduces oxygen delivery to the body.",
+  no2: "Nitrogen Dioxide (NO₂) is a pollutant from car exhaust that worsens respiratory diseases and contributes to air pollution."
+};
+
+dropdowns.forEach(dropdown => {
+  dropdown.addEventListener('click', () => {
+    // Remove active class from others
+    dropdowns.forEach(d => d.classList.remove('active'));
+
+    // Add active class to current
+    dropdown.classList.add('active');
+
+    // Get type and update content
+    const type = dropdown.dataset.type;
+    contentText.textContent = contentMap[type];
+    contentBox.style.display = 'block';
+  });
+});
+
 // Pop-up close button enables rotation again
 const popUpClose = document.getElementById('close-pop-up');
 popUpClose.addEventListener('click', () => {
-	document.getElementById('pop-up').style.display = 'none';
-	controls.enableRotate = true;
+    document.getElementById('pop-up').style.display = 'none';
+    document.getElementById('top-container').style.display = 'flex';
+    controls.enableRotate = true;
 });
 
 // Helper to clone and position continent markers once model is loaded
 function createContinentMarkers(name, x, y, z) {
-	if (!continentModel) return null; // Check if model is ready
-	const marker = continentModel.clone();
-	marker.position.set(x, y, z);
-	marker.name = name; // Identifier for interaction
-	return marker;
+    if (!continentModel) return null; // Check if model is ready
+    const marker = continentModel.clone();
+    marker.position.set(x, y, z);
+    marker.name = name; // Identifier for interaction
+    return marker;
 }
 
 // Base sphere representing the planet
 const ball = new THREE.Mesh(
-	new THREE.SphereGeometry(24, 50, 50),
-	new THREE.MeshBasicMaterial()
+    new THREE.SphereGeometry(24, 50, 50),
+    new THREE.MeshBasicMaterial()
 );
 scene.add(ball);
 
@@ -95,31 +120,31 @@ let continentModel; // Will store loaded pin model
 
 // Load 3D pin model and place markers for each continent
 loader.load(
-	'Assets/models/Pin.glb',
-	(gltf) => {
-		continentModel = gltf.scene;
-		// Create markers with names and positions
-		const marker1 = createContinentMarkers("continentMarker1", -19, 22, 5);
-		const marker2 = createContinentMarkers("continentMarker2", 0, 22, 20);
-		const marker3 = createContinentMarkers("continentMarker3", -27, 5, 10);
-		const marker4 = createContinentMarkers("continentMarker4", 3, 21, -22);
-		const marker5 = createContinentMarkers("continentMarker5", -14, -5, -26);
-		const marker6 = createContinentMarkers("continentMarker6", 19, -14, 23);
+    'Assets/models/Pin.glb',
+    (gltf) => {
+        continentModel = gltf.scene;
+        // Create markers with names and positions
+        const marker1 = createContinentMarkers("continentMarker1", -19, 22, 5);
+        const marker2 = createContinentMarkers("continentMarker2", 0, 22, 20);
+        const marker3 = createContinentMarkers("continentMarker3", -27, 5, 10);
+        const marker4 = createContinentMarkers("continentMarker4", 3, 21, -22);
+        const marker5 = createContinentMarkers("continentMarker5", -14, -5, -26);
+        const marker6 = createContinentMarkers("continentMarker6", 19, -14, 23);
 
-		// Add existing markers to the group
-		[marker1, marker2, marker3, marker4, marker5, marker6].forEach(marker => {
-			if (marker) markerGroup.add(marker);
-		});
+        // Add existing markers to the group
+        [marker1, marker2, marker3, marker4, marker5, marker6].forEach(marker => {
+            if (marker) markerGroup.add(marker);
+        });
 
-		// Attach markers to the planet
-		ball.add(markerGroup);
-	},
-	(xhr) => {
-		console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`); // Progress logging
-	},
-	(error) => {
-		console.error('An error occurred while loading the model:', error);
-	}
+        // Attach markers to the planet
+        ball.add(markerGroup);
+    },
+    (xhr) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`); // Progress logging
+    },
+    (error) => {
+        console.error('An error occurred while loading the model:', error);
+    }
 );
 
 // LABEL SETUP: HTML element and CSS2DObject for tooltips
@@ -137,65 +162,65 @@ let hoveredObject = null; // Track current marker under cursor
 
 // Handle mouse movement to display continent tooltips
 window.addEventListener("mousemove", function (e) {
-	// Only if pop-up is hidden
-	if (window.getComputedStyle(document.getElementById('pop-up')).display === 'none') {
-		// Normalize mouse coords
-		mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
-		mousePos.y = - (e.clientY / window.innerHeight) * 2 + 1;
+    // Only if pop-up is hidden
+    if (window.getComputedStyle(document.getElementById('pop-up')).display === 'none') {
+        // Normalize mouse coords
+        mousePos.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mousePos.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
-		raycaster.setFromCamera(mousePos, camera);
-		const intersects = raycaster.intersectObjects([ball, markerGroup], true);
+        raycaster.setFromCamera(mousePos, camera);
+        const intersects = raycaster.intersectObjects([ball, markerGroup], true);
 
-		if (intersects.length > 0) {
-			// Find topmost continent marker in hierarchy
-			let obj = intersects[0].object;
-			while (obj && !obj.name.startsWith("continentMarker")) {
-				obj = obj.parent;
-			}
+        if (intersects.length > 0) {
+            // Find topmost continent marker in hierarchy
+            let obj = intersects[0].object;
+            while (obj && !obj.name.startsWith("continentMarker")) {
+                obj = obj.parent;
+            }
 
-			if (obj && obj.name.startsWith("continentMarker")) {
-				hoveredObject = obj;
-				labelP.className = "tooltip show";
+            if (obj && obj.name.startsWith("continentMarker")) {
+                hoveredObject = obj;
+                labelP.className = "tooltip show";
 
-				// Position label above marker
-				const pos = new THREE.Vector3();
-				hoveredObject.getWorldPosition(pos);
-				cPointLabel.position.copy(pos).add(new THREE.Vector3(0, 10, 0));
+                // Position label above marker
+                const pos = new THREE.Vector3();
+                hoveredObject.getWorldPosition(pos);
+                cPointLabel.position.copy(pos).add(new THREE.Vector3(0, 10, 0));
 
-				// Set tooltip text based on marker name
-				switch (hoveredObject.name) {
-					case "continentMarker1": labelP.textContent = "Click to reveal Europe"; break;
-					case "continentMarker2": labelP.textContent = "Click to reveal Asia"; break;
-					case "continentMarker3": labelP.textContent = "Click to reveal Africa"; break;
-					case "continentMarker4": labelP.textContent = "Click to reveal North America"; break;
-					case "continentMarker5": labelP.textContent = "Click to reveal South America"; break;
-					case "continentMarker6": labelP.textContent = "Click to reveal Oceania"; break;
-				}
-			} else {
-				hoveredObject = null;
-				labelP.className = "tooltip hide";
-			}
-		} else {
-			hoveredObject = null;
-			labelP.className = "tooltip hide";
-		}
-	}
+                // Set tooltip text based on marker name
+                switch (hoveredObject.name) {
+                    case "continentMarker1": labelP.textContent = "Click to reveal Europe"; break;
+                    case "continentMarker2": labelP.textContent = "Click to reveal Asia"; break;
+                    case "continentMarker3": labelP.textContent = "Click to reveal Africa"; break;
+                    case "continentMarker4": labelP.textContent = "Click to reveal North America"; break;
+                    case "continentMarker5": labelP.textContent = "Click to reveal South America"; break;
+                    case "continentMarker6": labelP.textContent = "Click to reveal Oceania"; break;
+                }
+            } else {
+                hoveredObject = null;
+                labelP.className = "tooltip hide";
+            }
+        } else {
+            hoveredObject = null;
+            labelP.className = "tooltip hide";
+        }
+    }
 });
 
 // Utility to hide all continent overlays
 function hideAllContainers() {
-	Europe_Container.style.display = "none";
-	Africa_Container.style.display = "none";
-	Asia_Container.style.display = "none";
-	SouthAmerica_Container.style.display = "none";
-	NorthAmerica_Container.style.display = "none";
-	Oceania_Container.style.display = "none";
+    Europe_Container.style.display = "none";
+    Africa_Container.style.display = "none";
+    Asia_Container.style.display = "none";
+    SouthAmerica_Container.style.display = "none";
+    NorthAmerica_Container.style.display = "none";
+    Oceania_Container.style.display = "none";
 }
 
 // Close buttons for overlays call hideAllContainers
 const closeButton = document.querySelectorAll(".close-overlay");
 closeButton.forEach(button => {
-	button.addEventListener('click', hideAllContainers);
+    button.addEventListener('click', hideAllContainers);
 });
 
 // Listen for any click on the window

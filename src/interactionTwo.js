@@ -12,8 +12,8 @@ const { scene, camera, renderer } = createScene();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-camera.position.set(4, 3.5, -1.3);
-camera.lookAt(-1.3, 0, -1.3);
+camera.position.set(2.5, 3.5, -1.3);
+camera.lookAt(-2, 0, -1.3);
 
 const listener = new THREE.AudioListener();
 camera.add(listener);
