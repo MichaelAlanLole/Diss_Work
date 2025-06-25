@@ -1,6 +1,11 @@
+/* ==========================================================================
+   Universal (Targets all elements)
+   ========================================================================== */
+
 * {
     font-family: "Montserrat", sans-serif;
     color: #fff;
+    font-weight: 400;
 }
 
 body {
@@ -9,9 +14,15 @@ body {
     background: rgba(0, 0, 0, 0.9)
 }
 
-/* Home Page */
+/* ==========================================================================
+   Home Page (Landing Page)
+   ========================================================================== */
 
-/* Format container for content */
+/* ==========================================================================
+   Layout (Formatting containers)
+   ========================================================================== */
+
+/* Format container to hold all content */
 .home-container {
     width: 80%;
     max-width: 800px;
@@ -20,18 +31,20 @@ body {
     text-align: center;
 }
 
+/* Format title, set font size and weight (Boldness) */
 .title {
     margin-top: 40px;
     font-size: 2.5em;
-    
+    font-weight: 650;
 }
 
+/* Format description for the webpage, set font size */
 .description {
     margin: 20px 0;
-    font-size: 1.2em;
-    
+    font-size: 1.2rem;
 }
 
+/* Format scene containers */
 .scenes {
     display: flex;
     justify-content: space-between;
@@ -40,6 +53,7 @@ body {
     margin-top: 40px;
 }
 
+/* Format each scenes container */
 .scene-box {
     flex: 1;
     min-width: 300px;
@@ -56,10 +70,16 @@ body {
     transition: transform 0.2s;
 }
 
+/* Add animation when hovering over scene */
 .scene-box:hover {
     transform: translateY(-5px);
 }
 
+/* ==========================================================================
+   Components (Paragraphs, titles, ect.)
+   ========================================================================== */
+
+/* Format images in the scene box */
 .scene-box img {
     width: 100%;
     height: 100%;
@@ -67,23 +87,33 @@ body {
     margin-bottom: 15px;
 }
 
+/* Format title for each scene box */
 .scene-box h2 {
     margin: 0 0 10px;
-    
+    font-weight: 650;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
+/* Format description for each scene */
 .scene-box p {
     margin-top: auto;
-    
 }
 
+/* If viewport is small, change to vertical allignment for scenes */
 @media (max-width: 600px) {
     .scenes {
         flex-direction: column;
     }
 }
 
-/* Globe Scene */
+/* ==========================================================================
+   Globe Scene
+   ========================================================================== */
+
+/* ==========================================================================
+   Layout (Formatting containers)
+   ========================================================================== */
 
 .top-container {
     display: none;
@@ -100,23 +130,14 @@ body {
     transform: translateX(-50%);
 }
 
-.top-container h5 {
-    
-    font-weight: 650;
-    font-size: 1.5rem;
-    padding: 0px;
-    margin: 5px;
-}
-
 .top-buttons {
-  display: flex;
-  
+    display: flex;
 }
 
 .top-dropdown {
     flex: 1;
     text-align: center;
-    
+
     background-color: #123458;
     border: 2px solid #205781;
     border-radius: 10px;
@@ -124,25 +145,8 @@ body {
     margin: 10px;
     cursor: pointer;
     font-weight: 550;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s, transform 0.2s;
-}
-
-.top-dropdown:hover {
-    background-color: #205781;
-
-    transform: translateY(-2px);
-}
-
-.backButton {
-    position: absolute;
-}
-
-.button {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    width: auto;
-    padding: 0.5rem 1rem;
 }
 
 .tooltip {
@@ -158,88 +162,22 @@ body {
     transition-property: opacity, transform;
 }
 
-.tooltip::after {
+#pop-up {
     position: absolute;
-    content: "";
-    width: 20px;
-    height: 20px;
-    background-color: #123458;
-    top: 90%;
+    top: 50%;
     left: 50%;
-    transform: rotateZ(45deg) translateX(-50%);
-    z-index: -1;
-}
+    transform: translate(-50%, -50%);
 
-.answr-btn {
-    position: relative;
-    /* anchor arrow */
-    overflow: visible;
-    /* let arrow stick out */
-    background: #123458;
-    border: 2px solid #1d4ed8;
-    border-radius: 8px;
-    padding: 0.6rem;
-    font-family: "Montserrat", sans-serif;
-    color: white;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
-    cursor: pointer;
-}
+    width: 800px;
+    max-height: 60vh;
 
+    padding: 20px;
 
-
-.hide {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.button.hide {
-    display: none;
-    pointer-events: none;
-}
-
-.show {
-    opacity: 1;
-    transform: translateY(0px);
-}
-
-.button.show {
-    display: block;
-    pointer-events: auto;
-}
-
-.question-container {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 900px;
-    max-width: 80%;
     background-color: #123458;
     border: 2px solid #205781;
     border-radius: 20px;
-    padding: 10px;
-    margin-top: 10px;
-}
 
-.question {
-    padding: 10px 0px 10px 0px;
-    font-weight: 650;
-    font-size: 1.5rem;
-}
-
-.question p {
-    padding: 0px;
-    margin: 10px;
-    font-weight: 400;
-}
-
-.strt-btn,
-.answr,
-.next {
-    width: 100px;
+    text-align: center;
 }
 
 .result-label {
@@ -247,56 +185,11 @@ body {
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 14px;
-    
+
     text-align: center;
     pointer-events: none;
     transform: translateX(-50%);
     white-space: nowrap;
-}
-
-.result-label.hidden {
-    display: none;
-}
-
-.result-label.correct {
-    background: rgba(0, 128, 0, 0.8);
-}
-
-.result-label.wrong {
-    background: rgba(128, 0, 0, 0.8);
-}
-
-#explanation-box {
-    border-top: 2px solid #205781;
-    padding: 10px 10px 0px 10px;
-    font-size: 1.1rem;
-}
-
-#explanation-box.hidden {
-    display: none;
-}
-
-.hidden {
-    display: none;
-}
-
-.correct {
-    background-color: green;
-}
-
-.wrong {
-    background-color: red;
-}
-
-.button {
-    position: absolute;
-    width: 200px;
-}
-
-.files {
-    border: 2px solid #666;
-    padding: 10px;
-    margin-bottom: 20px;
 }
 
 .locations {
@@ -304,10 +197,6 @@ body {
     padding: 8px;
     margin: 8px 0;
     border-radius: 4px;
-}
-
-.locations h3 {
-    margin: 0 0 4px;
 }
 
 .continents {
@@ -330,17 +219,11 @@ body {
     /* Basic styling so it’s clear */
     background-color: rgba(24, 28, 20, 0.8);
     border: 2px solid #205781;
-    color: #ffffff;
     border-radius: 10px;
     padding: 10px;
     display: none;
 
     /* toggled by JavaScript (“block” when sphere is clicked) */
-}
-
-/* Make each child div block-level and stack with spacing: */
-.continents>div {
-    margin-bottom: 10px;
 }
 
 .locationDiv {
@@ -351,22 +234,15 @@ body {
 
 /* The clickable city/country header */
 .dropdown-header {
-    font-family: "Montserrat", sans-serif;
     font-weight: 400;
     cursor: pointer;
     /* so the user knows they can click it */
     padding: 20px;
-    
+
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.locationDiv:hover {
-    background-color: #205781;
-
-    transform: translateY(-2px);
 }
 
 /* The color box at the right or next to the text */
@@ -387,34 +263,6 @@ body {
     /* indent so it looks nested under the header */
 }
 
-.dropdown-details h3 {
-    font-size: 1rem;
-}
-
-#pop-up {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 800px;
-    max-height: 60vh;
-
-    padding: 20px;
-
-    background-color: #123458;
-    border: 2px solid #205781;
-    color: white;
-    border-radius: 20px;
-
-    font-family: "Montserrat", sans-serif;
-    text-align: center;
-}
-
-#pop-up h2 {
-    margin-top: 0px;
-}
-
 .overlay-controls {
     padding-top: 10px;
 }
@@ -423,35 +271,6 @@ body {
     width: 200px;
     font-size: 1.1rem;
     font-weight: 500;
-}
-
-.dropdown-details.show {
-    display: block;
-    font-family: "Montserrat", sans-serif;
-}
-
-.green {
-    background-color: green;
-}
-
-.yellow {
-    background-color: yellow;
-}
-
-.orange {
-    background-color: orange;
-}
-
-.red {
-    background-color: red;
-}
-
-.purple {
-    background-color: purple;
-}
-
-.maroon {
-    background-color: maroon;
 }
 
 .qualityDiv,
@@ -472,13 +291,6 @@ body {
     border-bottom: 2px solid #205781;
 }
 
-.paramDiv h3,
-.paramDiv p {
-    margin: 0;
-    /* Remove default margins to fine tune the layout */
-    padding: 0;
-}
-
 .lilDiv {
     display: flex;
     justify-content: space-between;
@@ -487,10 +299,9 @@ body {
 .aqi-scale-dropdown {
     max-width: 300px;
     margin: 1rem auto;
-    font-family: "Montserrat", sans-serif;
     background-color: rgba(24, 28, 20, 0.9);
     border-radius: 10px;
-    
+
     overflow: hidden;
 }
 
@@ -503,27 +314,10 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.aqi-scale-dropdown:not(.open) .aqi-scale-header:hover {
-    background-color: #205781;
-    transform: translateY(-2px);
-}
-
-.aqi-scale-header h4 {
-    margin-bottom: 0px;
-}
-
-.aqi-scale-header p {
-    margin-top: 0px;
-}
-
 /* Details initially hidden */
 .aqi-scale-details {
     max-height: 0;
     opacity: 0;
-}
-
-.aqi-scale-dropdown.open .aqi-scale-header {
-    background-color: #205781;
 }
 
 /* When open, details expand */
@@ -560,15 +354,148 @@ body {
     flex-shrink: 0;
 }
 
+/* ==========================================================================
+   Components (Paragraphs, titles, ect.)
+   ========================================================================== */
+
+.top-container h5 {
+
+    font-weight: 650;
+    font-size: 1.5rem;
+    padding: 0px;
+    margin: 5px;
+}
+
+#pop-up h2 {
+    margin-top: 0px;
+    font-weight: 550;
+    font-size: 1.5rem;
+}
+
+.locations h3 {
+    margin: 0 0 4px;
+}
+
+/* Make each child div block-level and stack with spacing: */
+.continents>div {
+    margin-bottom: 10px;
+}
+
+.dropdown-details h3 {
+    font-size: 1rem;
+}
+
+.paramDiv h3,
+.paramDiv p {
+    margin: 0;
+    /* Remove default margins to fine tune the layout */
+    padding: 0;
+}
+
+.aqi-scale-header h4 {
+    margin-bottom: 0px;
+}
+
+.aqi-scale-header p {
+    margin-top: 0px;
+}
+
+/* ==========================================================================
+   Animation, Hiding/Show and changes
+   ========================================================================== */
+
+.top-dropdown:hover {
+    background-color: #205781;
+
+    transform: translateY(-2px);
+}
+
+.tooltip::after {
+    position: absolute;
+    content: "";
+    width: 20px;
+    height: 20px;
+    background-color: #123458;
+    top: 90%;
+    left: 50%;
+    transform: rotateZ(45deg) translateX(-50%);
+    z-index: -1;
+}
+
+.hide {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.button.hide {
+    display: none;
+    pointer-events: none;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.button.show {
+    display: block;
+    pointer-events: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.locationDiv:hover {
+    background-color: #205781;
+
+    transform: translateY(-2px);
+}
+
+.dropdown-details.show {
+    display: block;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
+}
+
+.orange {
+    background-color: orange;
+}
+
+.red {
+    background-color: red;
+}
+
+.purple {
+    background-color: purple;
+}
+
+.maroon {
+    background-color: maroon;
+}
+
+.aqi-scale-dropdown:not(.open) .aqi-scale-header:hover {
+    background-color: #205781;
+    transform: translateY(-2px);
+}
+
+.aqi-scale-dropdown.open .aqi-scale-header {
+    background-color: #205781;
+}
+
 .close-overlay,
 .strt-btn {
     display: inline-block;
-    padding: 1rem 1rem;
     /* More padding for a bulkier look */
     font-size: 1.2rem;
     /* Increase font size for readability */
-    font-family: 'Montserrat', sans-serif;
-    
+    padding: 10px;
     background-color: #123458;
     border: solid 2px #205781;
     border-radius: 8px;
@@ -585,8 +512,8 @@ button.next {
     padding: 10px;
     margin: 0px 10px 0px 10px;
     /* More padding for a bulkier look */
-    font-size: 1rem;
-    
+    font-size: 1.2rem;
+
     background-color: #123458;
     border: solid 2px #205781;
     border-radius: 8px;
@@ -601,30 +528,6 @@ button.next {
     display: none;
     /* hidden by default */
     margin-top: 10px;
-}
-
-.nav-arrow {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12rem;
-    color: white;
-    padding: 4rem;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.nav-arrow:hover {
-    color: rgba(0, 0, 0, 0.7);
-}
-
-.nav-left {
-    left: 3rem;
-}
-
-.nav-right {
-    right: 3rem;
 }
 
 .next-container.show {
@@ -688,4 +591,129 @@ button.next {
        You might consider wrapping your scrollable content inside another element 
        that does not have border radius. */
 
+}
+
+/* ==========================================================================
+   Quiz Scene
+   ========================================================================== */
+
+/* ==========================================================================
+   Layout (Formatting containers)
+   ========================================================================== */
+
+.question-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    max-width: 80%;
+    background-color: #123458;
+    border: 2px solid #205781;
+    border-radius: 20px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.question {
+    padding: 10px 0px 10px 0px;
+    font-size: 1.5rem;
+    font-weight: 650;
+}
+
+.answr-btn {
+    position: relative;
+    /* anchor arrow */
+    overflow: visible;
+    /* let arrow stick out */
+    background: #123458;
+    border: 2px solid #1d4ed8;
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-family: "Montserrat", sans-serif;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+    cursor: pointer;
+}
+
+.strt-btn,
+.answr,
+.next {
+    width: 100px;
+}
+
+#explanation-box {
+    border-top: 2px solid #205781;
+    padding: 10px 10px 0px 10px;
+    font-size: 1.1rem;
+}
+
+/* ==========================================================================
+   Components (Paragraphs, titles, ect.)
+   ========================================================================== */
+
+.question p {
+    padding: 0px;
+    margin: 10px;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   Animation, Hiding/Show and changes
+   ========================================================================== */
+
+.result-label.hidden {
+    display: none;
+}
+
+.result-label.correct {
+    background: rgba(0, 128, 0, 0.8);
+}
+
+.result-label.wrong {
+    background: rgba(128, 0, 0, 0.8);
+}
+
+#explanation-box.hidden {
+    display: none;
+}
+
+.correct {
+    background-color: green;
+}
+
+.wrong {
+    background-color: red;
+}
+
+/* ==========================================================================
+   Universal (For multiple scenes)
+   ========================================================================== */
+
+.nav-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 12rem;
+    color: white;
+    padding: 4rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-arrow:hover {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.nav-left {
+    left: 3rem;
+}
+
+.nav-right {
+    right: 3rem;
 }
