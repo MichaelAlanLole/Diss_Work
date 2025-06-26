@@ -65,9 +65,8 @@ controls.enableDamping = true; // Smooth motion
 controls.enablePan = false;
 controls.enableZoom = false;
 
-const dropdowns = document.querySelectorAll('.top-dropdown');
+const buttons = document.querySelectorAll('.top-dropdown');
 const contentBox = document.getElementById('dropdownContentBox');
-const contentText = document.getElementById('dropdownContentText');
 
 const contentMap = {
   pm: "Particulate Matter (PM) includes microscopic particles from vehicles, tires, and road dust. It can harm lungs and heart health over time.",
@@ -75,18 +74,26 @@ const contentMap = {
   no2: "Nitrogen Dioxide (NO₂) is a pollutant from car exhaust that worsens respiratory diseases and contributes to air pollution."
 };
 
-dropdowns.forEach(dropdown => {
-  dropdown.addEventListener('click', () => {
-    // Remove active class from others
-    dropdowns.forEach(d => d.classList.remove('active'));
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const isActive = btn.classList.contains('active');
 
-    // Add active class to current
-    dropdown.classList.add('active');
+    // If already active, close it
+    if (isActive) {
+      btn.classList.remove('active');
+      contentBox.classList.remove('visible');
+      contentBox.textContent = '';
+      return;
+    }
 
-    // Get type and update content
-    const type = dropdown.dataset.type;
-    contentText.textContent = contentMap[type];
-    contentBox.style.display = 'block';
+    // Otherwise, close all and open this one
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Inject and show content
+    const key = btn.dataset.type;
+    contentBox.textContent = contentMap[key] || '';
+    contentBox.classList.add('visible');
   });
 });
 
