@@ -11,23 +11,33 @@
 		rel="stylesheet">
 
 	<title>Interactive Experience</title>
-  <script type="module" crossorigin src="./assets/second-DjU_FzEi.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/CSS2DRenderer-CMLneB3r.js">
-  <link rel="stylesheet" crossorigin href="./assets/CSS2DRenderer-C-VipBBb.css">
+  <script type="module" crossorigin src="./assets/second-DZ65bY45.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/CSS2DRenderer-DLE2eAPw.js">
+  <link rel="stylesheet" crossorigin href="./assets/styles-OIj6An9E.css">
 </head>
 
 <body>
-	<!-- <a href="interactionTwo.html">Here</a>-->
 	<div id="pop-up">
 		<h2>Air Quality Around The Globe</h2>
-		<p>Welcome to my interactive experience on air pollution, with a focus on vehicle emissions. This includes
-			Nitrogen Dioxide (NO₂), Particulate Matter (PM2.5 and PM10), and Carbon Monoxide (CO), all of which are
-			released into the air we breathe by the vehicles we drive, significantly impacting urban environments.</p>
-		<p>When inhaled in significant amounts, these harmful gases can lead to a wide range of health problems and, in some cases, may even be fatal.
-		</p>
-		<p>Please click on any continent to view the air quality of its most populated cities!</p>
+		<p>Welcome to my interactive experience on air pollution, with a focus on vehicle emissions, which significantly impact urban environments and the air we breathe.</p>
+		<p>Use your mouse to click and drag the globe, and click the buttons above it to explore the emissions produced!</p>
+		<p>Please click on any red marker above a continent to view the air quality of its major cities!</p>
 		<button id="close-pop-up" class="close-overlay">Close</button>
 	</div>
+
+	<div class="top-container" id="top-container">
+		<h5>What does my vehicle produce?</h5>
+		<div class="top-buttons">
+			<div class="top-dropdown" data-type="pm">Particulate Matter (PM)</div>
+			<div class="top-dropdown" data-type="co">Carbon Monoxide (CO)</div>
+			<div class="top-dropdown" data-type="no2">Nitrogen Dioxide (NO₂)</div>
+		</div>
+
+		<div class="dropdown-full-content" id="dropdownContentBox">
+			<p id="dropdownContentText"></p>
+		</div>
+	</div>
+
 	<div class="continent-container">
 		<div id="Europe-container" class="continents">
 			<div class="overlay-controls">
@@ -252,7 +262,7 @@
 			</div>
 		</div>
 	</div>
-	<a href="interactionTwo.html"     class="nav-arrow nav-right" aria-label="Go to next page">›</a>
+	<a href="interactionTwo.html" class="nav-arrow nav-right" aria-label="Go to next page">›</a>
 </body>
 
 </html>
